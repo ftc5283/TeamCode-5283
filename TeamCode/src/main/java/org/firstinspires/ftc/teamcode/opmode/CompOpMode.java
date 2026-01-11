@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.pipeline.HardwarePipeline;
 import org.firstinspires.ftc.teamcode.pipeline.TelemetryPipeline;
 import org.firstinspires.ftc.teamcode.utility.ButtonOnPress;
 import org.firstinspires.ftc.teamcode.utility.ButtonToggle;
+import org.firstinspires.ftc.teamcode.utility.HardwareConstants;
 import org.firstinspires.ftc.teamcode.utility.Supervisor;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
@@ -59,21 +60,32 @@ public class CompOpMode extends OpMode{
         flyWheel = hardwareMap.get(DcMotorEx.class, "flyWheel");
         controlHub = hardwareMap.voltageSensor.get("Control Hub");
 
-        ctrl = gamepadEx1;
-
+        primaryCtrl = gamepadEx1;
+        secondaryCtrl = gamepadEx2;
         /*
            this might be the one time this is a bad idea, this might stress the motor a lot lol.
          */
         flyWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
+    // PRIMARY CONTROLLER
     final ButtonToggle intakeXToggle = new ButtonToggle(X, false);
     final ButtonToggle flyWheelRBumperToggle = new ButtonToggle(RIGHT_BUMPER, false);
     final ButtonToggle kickerBToggle = new ButtonToggle(B, false);
     final ButtonToggle testRightToggle = new ButtonToggle(RIGHT_STICK_BUTTON, false);
     final ButtonToggle throttleLeftStickToggle = new ButtonToggle(LEFT_STICK_BUTTON, true);
     final ButtonOnPress floorYOnPress = new ButtonOnPress(Y);
-    GamepadEx ctrl;
+
+    // SECONDARY CONTROLLER
+    final ButtonToggle holdFloorYToggle = new ButtonToggle(Y, false);
+
+    @SuppressWarnings("unused")
+
+    final ButtonOnPress incrementOnPress = new ButtonOnPress(DPAD_UP);
+    @SuppressWarnings("unused")
+    final ButtonOnPress decrementOnPress = new ButtonOnPress(DPAD_DOWN);
+
+    GamepadEx primaryCtrl, secondaryCtrl;
     double flyWheelCurrent = 0;
 
     @FunctionalInterface
@@ -84,21 +96,27 @@ public class CompOpMode extends OpMode{
     final double throttleForwardBack = squareInputsCorrection.map(0.5);
     final double throttleTurn = squareInputsCorrection.map(0.5);
 
+    public void setMiniFlyWheelPowers(double speed) {
+        fwr.setPower(-speed);
+        fwl.setPower(speed);
+    }
 
     @Override
     public void loop() {
         if (gamepad1.back) {
-            ctrl = gamepadEx1;
+            primaryCtrl = gamepadEx1;
+            secondaryCtrl = gamepadEx2;
         } else if (gamepad2.back) {
-            ctrl = gamepadEx2;
+            primaryCtrl = gamepadEx2;
+            secondaryCtrl = gamepadEx1;
         }
         // Don't get rid of this. Very useful for figuring out if the issue is the configuration or
         // if one of the bevel gears is on backwards.
-        if (testRightToggle.check(ctrl)) {
-            boolean fl = ctrl.getButton(A),
-                    fr = ctrl.getButton(B),
-                    bl = ctrl.getButton(X),
-                    br = ctrl.getButton(Y);
+        if (testRightToggle.check(primaryCtrl)) {
+            boolean fl = primaryCtrl.getButton(A),
+                    fr = primaryCtrl.getButton(B),
+                    bl = primaryCtrl.getButton(X),
+                    br = primaryCtrl.getButton(Y);
             drive.driveWithMotorPowers(fl ? 1 : 0, fr ? 1 : 0, bl ? 1 : 0, br ? 1 : 0);
 
             telemetryPipeline.addHeader("PRESS RIGHT STICK TO EXIT");
@@ -113,28 +131,31 @@ public class CompOpMode extends OpMode{
         }
 
 
-//        if (up.check(ctrl)) {
-//            floorPos += 0.005;
-//        } else if (down.check(ctrl)) {
-//            floorPos -= 0.005;
+//        if (incrementOnPress.check(primaryCtrl)) {
+//            var += 0.01;
+//        } else if (decrementOnPress.check(primaryCtrl)) {
+//            var -= 0.01;
 //        }
 
-        fwr.setPower(ctrl.getButton(LEFT_BUMPER) ? -1 : 0);
-        fwl.setPower(ctrl.getButton(LEFT_BUMPER) ? 1 : 0);
-
-        intake.setPower(intakeXToggle.check(ctrl) ? 1 : 0);
-
-
-        kicker.setPosition(kickerBToggle.check(ctrl)? 0.60 : 0);
-//        floor.setPosition(floorPos);
-
-        if (
-            floorYOnPress.check(ctrl) ||
-            System.currentTimeMillis() < floorYOnPress.lastPressed + 1000
-        ) {
-            floor.setPosition(0.024);
+        if (secondaryCtrl.getButton(X)) {
+            setMiniFlyWheelPowers(-1);
+            intake.setPower(-1);
+            kicker.setPosition(0);
         } else {
-            floor.setPosition(0);
+            setMiniFlyWheelPowers(primaryCtrl.getButton(LEFT_BUMPER) ? 1 : 0);
+
+            intake.setPower(intakeXToggle.check(primaryCtrl) ? 1 : 0);
+
+            kicker.setPosition(kickerBToggle.check(primaryCtrl) ? HardwareConstants.KICKER_KICK_POS : 0);
+
+            if (
+                floorYOnPress.checkWithin(primaryCtrl, 1000) ||
+                holdFloorYToggle.check(secondaryCtrl)
+            ) {
+                floor.setPosition(HardwareConstants.FLOOR_POS);
+            } else {
+                floor.setPosition(0);
+            }
         }
 
 
@@ -142,8 +163,7 @@ public class CompOpMode extends OpMode{
         double turnSpeed = gamepad1.right_trigger - gamepad1.left_trigger;
         double strafeSpeed = gamepadEx1.getLeftX();
         double forwardSpeed = gamepadEx1.getLeftY();
-        boolean throttleSpeed = throttleLeftStickToggle.check(ctrl);
-
+        boolean throttleSpeed = throttleLeftStickToggle.check(primaryCtrl);
 
         drive.driveRobotCentric(
                 -strafeSpeed * (throttleSpeed ? throttleStrafe : 1),
@@ -154,7 +174,7 @@ public class CompOpMode extends OpMode{
 
         supervisor.run(telemetryPipeline);
 
-        flyWheel.setVelocity(flyWheelRBumperToggle.check(ctrl) ? 2.75 : 0, AngleUnit.RADIANS);
+        flyWheel.setVelocity(flyWheelRBumperToggle.check(primaryCtrl) ? HardwareConstants.FLY_WHEEL_VEL : 0, AngleUnit.RADIANS);
 
         flyWheelCurrent = flyWheel.getCurrent(CurrentUnit.MILLIAMPS);
 
@@ -164,6 +184,7 @@ public class CompOpMode extends OpMode{
         telemetryPipeline.addDataPoint("FlyWheel Current (mA)", flyWheelCurrent);
         telemetryPipeline.addDataPoint("FlyWheel Power", flyWheel.getPower());
         telemetryPipeline.addDataPoint("FlyWheel Velocity", flyWheel.getVelocity(AngleUnit.RADIANS));
+        telemetryPipeline.addDataPoint("FLY_WHEEL_VEL", HardwareConstants.FLY_WHEEL_VEL);
         telemetryPipeline.refresh();
     }
 }

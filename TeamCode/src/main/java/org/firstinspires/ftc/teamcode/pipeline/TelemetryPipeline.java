@@ -288,7 +288,7 @@ public class TelemetryPipeline{
      * Throws an exception if the state of this Telemetry Pipeline is illegal.
      */
     public void audit(){
-        if(keys.size()!=data.size())
+        if(keys.size() != data.size())
             throw new RuntimeException(
                     "Size of keys does not match size of data.\n"+
                             "keys.size() = "+keys.size()+"\n"+

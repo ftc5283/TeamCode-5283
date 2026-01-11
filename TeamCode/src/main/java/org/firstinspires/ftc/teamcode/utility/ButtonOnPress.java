@@ -26,7 +26,8 @@ public class ButtonOnPress {
         this.lastPressed = 0;
     }
 
-    /// Updates based on the controller input and returns the result.
+    /// Updates current state based on the controller input.
+    /// Returns true when the button is first pressed.
     public boolean check(@NonNull GamepadEx ctrl) {
         boolean isHeld = ctrl.getButton(button);
         if(isStickButton) {
@@ -46,6 +47,10 @@ public class ButtonOnPress {
             wasHeld = isHeld;
         }
         return lastValue;
+    }
+
+    public boolean checkWithin(@NonNull GamepadEx ctrl, long milliSeconds) {
+        return check(ctrl) || (System.currentTimeMillis() <= lastPressed + milliSeconds);
     }
 
     /// Updates the toggle based on the controller input and returns the result.
