@@ -22,10 +22,6 @@ import org.firstinspires.ftc.teamcode.utility.HardwareConstants;
 import org.firstinspires.ftc.teamcode.utility.Supervisor;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-
-import static java.lang.Math.abs;
-import static java.lang.Math.signum;
-
 @TeleOp(name = "Competition TeleOp")
 public class CompOpMode extends OpMode{
     protected TelemetryPipeline telemetryPipeline;
@@ -72,12 +68,12 @@ public class CompOpMode extends OpMode{
     final ButtonToggle intakeXToggle = new ButtonToggle(X, false);
     final ButtonToggle flyWheelRBumperToggle = new ButtonToggle(RIGHT_BUMPER, false);
     final ButtonToggle kickerBToggle = new ButtonToggle(B, false);
-    final ButtonToggle testRightToggle = new ButtonToggle(RIGHT_STICK_BUTTON, false);
     final ButtonToggle throttleLeftStickToggle = new ButtonToggle(LEFT_STICK_BUTTON, true);
     final ButtonOnPress floorYOnPress = new ButtonOnPress(Y);
 
     // SECONDARY CONTROLLER
     final ButtonToggle holdFloorYToggle = new ButtonToggle(Y, false);
+    final ButtonToggle testRightStickToggle = new ButtonToggle(RIGHT_STICK_BUTTON, false);
 
     @SuppressWarnings("unused")
 
@@ -112,14 +108,14 @@ public class CompOpMode extends OpMode{
         }
         // Don't get rid of this. Very useful for figuring out if the issue is the configuration or
         // if one of the bevel gears is on backwards.
-        if (testRightToggle.check(primaryCtrl)) {
-            boolean fl = primaryCtrl.getButton(A),
-                    fr = primaryCtrl.getButton(B),
-                    bl = primaryCtrl.getButton(X),
-                    br = primaryCtrl.getButton(Y);
+        if (testRightStickToggle.check(secondaryCtrl)) {
+            boolean fl = secondaryCtrl.getButton(A),
+                    fr = secondaryCtrl.getButton(B),
+                    bl = secondaryCtrl.getButton(X),
+                    br = secondaryCtrl.getButton(Y);
             drive.driveWithMotorPowers(fl ? 1 : 0, fr ? 1 : 0, bl ? 1 : 0, br ? 1 : 0);
 
-            telemetryPipeline.addHeader("PRESS RIGHT STICK TO EXIT");
+            telemetryPipeline.addHeader("PRESS RIGHT STICK ON SECONDARY CONTROLLER TO EXIT");
             telemetryPipeline.addDataPoint("Testing", "Testing");
             telemetryPipeline.addDataPoint("fl", fl);
             telemetryPipeline.addDataPoint("fr", fr);
@@ -129,7 +125,6 @@ public class CompOpMode extends OpMode{
             telemetryPipeline.refresh();
             return;
         }
-
 
 //        if (incrementOnPress.check(primaryCtrl)) {
 //            var += 0.01;
