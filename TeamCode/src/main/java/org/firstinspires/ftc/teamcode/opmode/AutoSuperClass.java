@@ -21,11 +21,13 @@ public abstract class AutoSuperClass extends LinearOpMode {
 
     ElapsedTime timer;
 
-    DcMotorEx cocker;
+    CRServoImplEx fwl, fwr, intake;
+    ServoImplEx kicker, floor;
+    DcMotorEx flyWheel;
     VoltageSensor controlHub;
 
     public void loadAndShoot() {
-
+    
     }
 
     public static DcMotorEx getCocker(HardwareMap hardwareMap) {
@@ -57,6 +59,15 @@ public abstract class AutoSuperClass extends LinearOpMode {
         cocker.setPower(0.7);
         sleep(5000);
         cocker.setPower(0);
+    }
+
+    public void stopFlyWheelNice(){
+        flyWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        flyWheel.setPower(0);
+        sleep(3000);
+        flyWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        flyWheel.setPower(0.01);
+        flyWheel.setPower(0);
     }
 
     /// angle is the angle to the line extending out the front of the robot

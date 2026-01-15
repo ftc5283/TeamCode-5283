@@ -15,8 +15,11 @@ public class AutoTest extends AutoSuperClass {
 //==========================//
         waitForStart();
 //==========================//
+        flyWheel.setVelocity(HardwareConstants.FLY_WHEEL_VEL, AngleUnit.RADIANS);
         sleep(15000);
+        setMiniFlyWheels(1);
         sleep(8000);
+        intake.setPower(1);
         sleep(7000);
     }
 }
