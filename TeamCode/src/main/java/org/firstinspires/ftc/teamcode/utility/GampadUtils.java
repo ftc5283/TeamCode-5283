@@ -47,7 +47,7 @@ public class GampadUtils {
      *
      * @return the speeds that it should move as [forwardSpeed, strafeSpeed].
      */
-    public static double[] speeds(@NonNull GamepadEx ctrl) {
+    public static double[] speedInputs(@NonNull GamepadEx ctrl) {
         double[] speeds = new double[2];
         if (dpadInUse(ctrl)) {
             speeds[0] = cast(ctrl.getButton(DPAD_UP)) - cast(ctrl.getButton(DPAD_DOWN));
@@ -65,7 +65,7 @@ public class GampadUtils {
      *
      * @return the speeds that it should move as [forwardSpeed, strafeSpeed].
      */
-    public static double[] speeds(@NonNull GamepadEx ctrl, @NonNull TelemetryPipeline telemetryPipeline) {
+    public static double[] speedInputs(@NonNull GamepadEx ctrl, @NonNull TelemetryPipeline telemetryPipeline) {
         double[] speeds = new double[2];
         if (dpadInUse(ctrl)) {
             speeds[0] = cast(ctrl.getButton(DPAD_UP)) - cast(ctrl.getButton(DPAD_DOWN));
@@ -78,36 +78,6 @@ public class GampadUtils {
         }
         return speeds;
     }
-
-    /**
-     * Computes speed inputs based on the dpad and left joystick of the controller.
-     * Adds telemetry for whether the dpad input or joystick is being checked.
-     *
-     * @param inputGain speed multiplier
-     *
-     * @return the speeds that it should move as [forwardSpeed, strafeSpeed].
-     */
-    public static double[] speeds(@NonNull GamepadEx ctrl, double inputGain, @NonNull TelemetryPipeline telemetryPipeline) {
-        double[] speeds = speeds(ctrl, telemetryPipeline);
-        return new double[]{speeds[0]*inputGain, speeds[1]*inputGain};
-
-    }
-
-    /**
-     * Computes speed inputs based on the dpad and left joystick of the controller.
-     *
-     * @param inputGain speed multiplier
-     *
-     * @return the speeds that it should move as [forwardSpeed, strafeSpeed].
-     */
-    public static double[] speeds(@NonNull GamepadEx ctrl, double inputGain) {
-        double[] speeds = speeds(ctrl);
-        return new double[]{speeds[0]*inputGain, speeds[1]*inputGain};
-    }
-
-//    public static double turnSpeed(@NonNull GamepadEx ctrl) {
-//
-//    }
 
     public static String toString(GamepadKeys.Button button) {
         switch (button) {

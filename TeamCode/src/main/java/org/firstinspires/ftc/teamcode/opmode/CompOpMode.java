@@ -13,11 +13,11 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.pipeline.HardwarePipeline;
 import org.firstinspires.ftc.teamcode.pipeline.TelemetryPipeline;
 import org.firstinspires.ftc.teamcode.utility.ButtonOnPress;
 import org.firstinspires.ftc.teamcode.utility.ButtonToggle;
+import org.firstinspires.ftc.teamcode.utility.GampadUtils;
 import org.firstinspires.ftc.teamcode.utility.HardwareConstants;
 import org.firstinspires.ftc.teamcode.utility.Supervisor;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -58,10 +58,9 @@ public class CompOpMode extends OpMode{
 
         primaryCtrl = gamepadEx1;
         secondaryCtrl = gamepadEx2;
-        /*
-           this might be the one time this is a bad idea, this might stress the motor a lot lol.
-         */
-        flyWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        flyWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        flyWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 
     // PRIMARY CONTROLLER
@@ -82,7 +81,6 @@ public class CompOpMode extends OpMode{
     final ButtonOnPress decrementOnPress = new ButtonOnPress(DPAD_DOWN);
 
     GamepadEx primaryCtrl, secondaryCtrl;
-    double flyWheelCurrent = 0;
 
     @FunctionalInterface
     private interface Double2Double {double map(double x);}
@@ -126,11 +124,12 @@ public class CompOpMode extends OpMode{
             return;
         }
 
-//        if (incrementOnPress.check(primaryCtrl)) {
-//            var += 0.01;
-//        } else if (decrementOnPress.check(primaryCtrl)) {
-//            var -= 0.01;
+//        if (incrementOnPress.check(secondaryCtrl)) {
+//            HardwareConstants.FLY_WHEEL_VEL += 0.01;
+//        } else if (decrementOnPress.check(secondaryCtrl)) {
+//            HardwareConstants.FLY_WHEEL_VEL -= 0.01;
 //        }
+
 
         if (secondaryCtrl.getButton(X)) {
             setMiniFlyWheelPowers(-1);
@@ -156,8 +155,11 @@ public class CompOpMode extends OpMode{
 
 
         double turnSpeed = gamepad1.right_trigger - gamepad1.left_trigger;
-        double strafeSpeed = gamepadEx1.getLeftX();
-        double forwardSpeed = gamepadEx1.getLeftY();
+//        double forwardSpeed = gamepadEx1.getLeftY();
+//        double strafeSpeed = gamepadEx1.getLeftX();
+        double[] speeds = GampadUtils.speedInputs(primaryCtrl);
+        double forwardSpeed = speeds[0];
+        double strafeSpeed = speeds[1];
         boolean throttleSpeed = throttleLeftStickToggle.check(primaryCtrl);
 
         drive.driveRobotCentric(
@@ -169,17 +171,24 @@ public class CompOpMode extends OpMode{
 
         supervisor.run(telemetryPipeline);
 
-        flyWheel.setVelocity(flyWheelRBumperToggle.check(primaryCtrl) ? HardwareConstants.FLY_WHEEL_VEL : 0, AngleUnit.RADIANS);
-
-        flyWheelCurrent = flyWheel.getCurrent(CurrentUnit.MILLIAMPS);
+        if (secondaryCtrl.getButton(A))  {
+            flyWheel.setVelocity(HardwareConstants.FLY_WHEEL_VEL/-10);
+        } else {
+            flyWheel.setVelocity(flyWheelRBumperToggle.check(primaryCtrl) ? HardwareConstants.FLY_WHEEL_VEL : 0, AngleUnit.RADIANS);
+        }
 
         telemetryPipeline.addDataPoint("forward Speed", forwardSpeed);
         telemetryPipeline.addDataPoint("turn Speed", turnSpeed);
         telemetryPipeline.addDataPoint("strafe Speed", strafeSpeed);
-        telemetryPipeline.addDataPoint("FlyWheel Current (mA)", flyWheelCurrent);
         telemetryPipeline.addDataPoint("FlyWheel Power", flyWheel.getPower());
         telemetryPipeline.addDataPoint("FlyWheel Velocity", flyWheel.getVelocity(AngleUnit.RADIANS));
         telemetryPipeline.addDataPoint("FLY_WHEEL_VEL", HardwareConstants.FLY_WHEEL_VEL);
         telemetryPipeline.refresh();
+    }
+
+    @Override
+    public void stop() {
+        flyWheel.setPower(0);
+        flyWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 }
