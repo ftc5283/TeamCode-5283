@@ -31,7 +31,9 @@ public class CompOpMode extends OpMode{
     ElapsedTime timer;
 
     GamepadEx gamepadEx1, gamepadEx2;
-    DcMotorEx cocker;
+    CRServoImplEx fwl, fwr, intake;
+    ServoImplEx kicker, floor;
+    DcMotorEx flyWheel;
     VoltageSensor controlHub;
 
     @Override
@@ -44,14 +46,21 @@ public class CompOpMode extends OpMode{
         gamepadEx1 = new GamepadEx(gamepad1);
         gamepadEx2 = new GamepadEx(gamepad2);
 
-        cocker = hardwareMap.get(DcMotorEx.class, "cocker");
+        intake = hardwareMap.get(CRServoImplEx.class, "intake");
+        fwr = hardwareMap.get(CRServoImplEx.class, "fwr");
+        fwl = hardwareMap.get(CRServoImplEx.class, "fwl");
+        kicker = hardwareMap.get(ServoImplEx.class, "kicker");
+        floor = hardwareMap.get(ServoImplEx.class, "floor");
+//        kicker = hardwareMap.get(ServoImplEx.class, "kicker");
+
+        flyWheel = hardwareMap.get(DcMotorEx.class, "flyWheel");
         controlHub = hardwareMap.voltageSensor.get("Control Hub");
 
         primaryCtrl = gamepadEx1;
         secondaryCtrl = gamepadEx2;
 
-        cocker.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        cocker.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        flyWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        flyWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 
     // PRIMARY CONTROLLER
@@ -59,20 +68,17 @@ public class CompOpMode extends OpMode{
     final ButtonToggle flyWheelRBumperToggle = new ButtonToggle(RIGHT_BUMPER, false);
     final ButtonToggle kickerBToggle = new ButtonToggle(B, false);
     final ButtonToggle throttleLeftStickToggle = new ButtonToggle(LEFT_STICK_BUTTON, true);
+    final ButtonOnPress floorYOnPress = new ButtonOnPress(Y);
 
     // SECONDARY CONTROLLER
     final ButtonToggle holdFloorYToggle = new ButtonToggle(Y, false);
     final ButtonToggle testRightStickToggle = new ButtonToggle(RIGHT_STICK_BUTTON, false);
 
-
     @SuppressWarnings("unused")
+
     final ButtonOnPress incrementOnPress = new ButtonOnPress(DPAD_UP);
     @SuppressWarnings("unused")
     final ButtonOnPress decrementOnPress = new ButtonOnPress(DPAD_DOWN);
-    @SuppressWarnings("unused")
-    final ButtonOnPress doubleDeltaOnPress = new ButtonOnPress(DPAD_RIGHT);
-    @SuppressWarnings("unused")
-    final ButtonOnPress halveDeltaOnPress = new ButtonOnPress(DPAD_LEFT);
 
     GamepadEx primaryCtrl, secondaryCtrl;
 
@@ -84,7 +90,10 @@ public class CompOpMode extends OpMode{
     final double throttleForwardBack = squareInputsCorrection.map(0.5);
     final double throttleTurn = squareInputsCorrection.map(0.5);
 
-    double cockerPosDelta = 1;
+    public void setMiniFlyWheelPowers(double speed) {
+        fwr.setPower(-speed);
+        fwl.setPower(speed);
+    }
 
     @Override
     public void loop() {
@@ -115,25 +124,43 @@ public class CompOpMode extends OpMode{
             return;
         }
 
-        if (doubleDeltaOnPress.check(secondaryCtrl)) {
-            cockerPosDelta *= 2;
-        } else if (halveDeltaOnPress.check(secondaryCtrl)) {
-            cockerPosDelta /= 2;
-        }
-        if (incrementOnPress.check(primaryCtrl)) {
-            HardwareConstants.COCKER_POS_A += cockerPosDelta;
-        } else if (decrementOnPress.check(primaryCtrl)) {
-            HardwareConstants.COCKER_POS_A -= cockerPosDelta;
+//        if (incrementOnPress.check(secondaryCtrl)) {
+//            HardwareConstants.FLY_WHEEL_VEL += 0.01;
+//        } else if (decrementOnPress.check(secondaryCtrl)) {
+//            HardwareConstants.FLY_WHEEL_VEL -= 0.01;
+//        }
+
+
+        if (secondaryCtrl.getButton(X)) {
+            setMiniFlyWheelPowers(-1);
+            intake.setPower(-1);
+            kicker.setPosition(0);
+        } else {
+            setMiniFlyWheelPowers(primaryCtrl.getButton(LEFT_BUMPER) ? 1 : 0);
+
+            intake.setPower(intakeXToggle.check(primaryCtrl) ? 1 : 0);
+
+            kicker.setPosition(kickerBToggle.check(primaryCtrl) ? HardwareConstants.KICKER_KICK_POS : 0);
+
+            if (
+                floorYOnPress.checkWithin(primaryCtrl, 1000) ||
+                holdFloorYToggle.check(secondaryCtrl)
+            ) {
+                floor.setPosition(HardwareConstants.FLOOR_POS);
+            } else {
+                floor.setPosition(0);
+            }
         }
 
 
-        final double turnSpeed = gamepad1.right_trigger - gamepad1.left_trigger;
-//       final double forwardSpeed = gamepadEx1.getLeftY();
-//       final double strafeSpeed = gamepadEx1.getLeftX();
-        final double[] speeds = GampadUtils.speedInputs(primaryCtrl);
-        final double forwardSpeed = speeds[0];
-        final double strafeSpeed = speeds[1];
-        final boolean throttleSpeed = throttleLeftStickToggle.check(primaryCtrl);
+
+        double turnSpeed = gamepad1.right_trigger - gamepad1.left_trigger;
+//        double forwardSpeed = gamepadEx1.getLeftY();
+//        double strafeSpeed = gamepadEx1.getLeftX();
+        double[] speeds = GampadUtils.speedInputs(primaryCtrl);
+        double forwardSpeed = speeds[0];
+        double strafeSpeed = speeds[1];
+        boolean throttleSpeed = throttleLeftStickToggle.check(primaryCtrl);
 
         drive.driveRobotCentric(
                 -strafeSpeed * (throttleSpeed ? throttleStrafe : 1),
@@ -141,16 +168,27 @@ public class CompOpMode extends OpMode{
                 -turnSpeed * (throttleSpeed ? throttleTurn : 1),
                 true
         );
-        
-        
+
         supervisor.run(telemetryPipeline);
-        
+
+        if (secondaryCtrl.getButton(A))  {
+            flyWheel.setVelocity(HardwareConstants.FLY_WHEEL_VEL/-10);
+        } else {
+            flyWheel.setVelocity(flyWheelRBumperToggle.check(primaryCtrl) ? HardwareConstants.FLY_WHEEL_VEL : 0, AngleUnit.RADIANS);
+        }
+
         telemetryPipeline.addDataPoint("forward Speed", forwardSpeed);
         telemetryPipeline.addDataPoint("turn Speed", turnSpeed);
         telemetryPipeline.addDataPoint("strafe Speed", strafeSpeed);
-        telemetryPipeline.addDataPoint("current cocker pos", cocker.getCurrentPosition());
-        telemetryPipeline.addDataPoint("real cocker target", cocker.getTargetPosition());
-        telemetryPipeline.addDataPoint("set cocker target", HardwareConstants.COCKER_POS_A);
+        telemetryPipeline.addDataPoint("FlyWheel Power", flyWheel.getPower());
+        telemetryPipeline.addDataPoint("FlyWheel Velocity", flyWheel.getVelocity(AngleUnit.RADIANS));
+        telemetryPipeline.addDataPoint("FLY_WHEEL_VEL", HardwareConstants.FLY_WHEEL_VEL);
         telemetryPipeline.refresh();
+    }
+
+    @Override
+    public void stop() {
+        flyWheel.setPower(0);
+        flyWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 }

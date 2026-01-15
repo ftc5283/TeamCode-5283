@@ -23,11 +23,31 @@ public abstract class AutoSuperClass extends LinearOpMode {
 
     ElapsedTime timer;
 
-    DcMotorEx cocker;
+    CRServoImplEx fwl, fwr, intake;
+    ServoImplEx kicker, floor;
+    DcMotorEx flyWheel;
     VoltageSensor controlHub;
 
-    public void loadAndShoot() {
-        
+    public void setMiniFlyWheels(double power) {
+        fwr.setPower(-power);
+        fwl.setPower(power);
+    }
+
+    public void kickAndShoot(){
+        this.setMiniFlyWheels(0);
+        intake.setPower(1);
+
+        sleep(500);
+        kicker.setPosition(HardwareConstants.KICKER_KICK_POS);
+        sleep(1000);
+
+        this.setMiniFlyWheels(1);
+
+        sleep(500);
+        kicker.setPosition(0);
+        sleep(500);
+
+        this.setMiniFlyWheels(0);
     }
 
     public void initialize(boolean startParallelTelemetry) {
@@ -36,9 +56,14 @@ public abstract class AutoSuperClass extends LinearOpMode {
 
         timer = new ElapsedTime();
 
-        cocker = hardwareMap.get(DcMotorEx.class, "cocker");
-        cocker.setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
-        cocker.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intake = hardwareMap.get(CRServoImplEx.class, "intake");
+        fwr = hardwareMap.get(CRServoImplEx.class, "fwr");
+        fwl = hardwareMap.get(CRServoImplEx.class, "fwl");
+        kicker = hardwareMap.get(ServoImplEx.class, "kicker");
+        floor = hardwareMap.get(ServoImplEx.class, "floor");
+
+        flyWheel = hardwareMap.get(DcMotorEx.class, "flyWheel");
+        flyWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         controlHub = hardwareMap.voltageSensor.get("Control Hub");
 
@@ -49,8 +74,30 @@ public abstract class AutoSuperClass extends LinearOpMode {
         }
     }
 
-    public void shoot1() {
-        cocker.setTargetPosition(HardwareConstants.COCKER_POS_A);
+    public void shoot() {
+        flyWheel.setVelocity(HardwareConstants.FLY_WHEEL_VEL, AngleUnit.RADIANS);
+
+        sleep(7000);
+
+        // using `this` instead of just calling the method so that its more visually distinct from sleep
+        // even though sleep is also an instance method.
+        this.setMiniFlyWheels(1);
+
+        sleep(1000);
+
+        this.kickAndShoot();
+
+        sleep(1000);
+
+        floor.setPosition(HardwareConstants.FLOOR_POS);
+
+        sleep(1000);
+
+        this.kickAndShoot();
+
+        sleep(1000);
+
+        intake.setPower(0);
     }
 
     public void leak() {
@@ -75,6 +122,15 @@ public abstract class AutoSuperClass extends LinearOpMode {
         floor.setPosition(0);
     }
 
+    public void stopFlyWheelNice(){
+        flyWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        flyWheel.setPower(0);
+        sleep(3000);
+        flyWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        flyWheel.setPower(0.01);
+        flyWheel.setPower(0);
+    }
+
     /// angle is the angle to the line extending out the front of the robot
     public void move(double speed, double angleRad, long timeMillis) {
         double forwardSpeed = Math.cos(angleRad) * speed;
@@ -90,9 +146,9 @@ public abstract class AutoSuperClass extends LinearOpMode {
             @Override
             public void run(){
                 while (!auto.isStopRequested()) {
-                    telemetryPipeline.addDataPointPerpetual("real cocker pos", cocker.getCurrentPosition());
-                    telemetryPipeline.addDataPointPerpetual("real cocker target", cocker.getTargetPosition());
-                    telemetryPipeline.addDataPointPerpetual("set cocker target", HardwareConstants.COCKER_POS_A);
+                    telemetryPipeline.addDataPointPerpetual("flyWheel power", flyWheel.getPower());
+                    telemetryPipeline.addDataPointPerpetual("flyWheel current", flyWheel.getCurrent(CurrentUnit.MILLIAMPS));
+                    telemetryPipeline.addDataPointPerpetual("flyWheel velocity", flyWheel.getVelocity(AngleUnit.RADIANS));
                     telemetryPipeline.refresh();
                 }
             }

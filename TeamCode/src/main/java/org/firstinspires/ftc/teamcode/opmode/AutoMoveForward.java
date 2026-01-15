@@ -13,5 +13,6 @@ public class AutoMoveForward extends AutoSuperClass {
 //==========================//
 
         move(0.7,0, 600);
+        stopFlyWheelNice();
     }
 }

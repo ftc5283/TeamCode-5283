@@ -2,8 +2,8 @@ package org.firstinspires.ftc.teamcode.opmode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name = "Auto Shoot")
-public class AutoShoot extends AutoSuperClass {
+@Autonomous(name = "Auto Leak")
+public class AutoLeak extends AutoSuperClass {
     @Override
     public void runOpMode() {
         initialize(true);
@@ -12,7 +12,6 @@ public class AutoShoot extends AutoSuperClass {
         waitForStart();
 //==========================//
 
-        shoot();
-        stopFlyWheelNice();
+        leak();
     }
 }
