@@ -11,13 +11,14 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.pipeline.HardwarePipeline;
 import org.firstinspires.ftc.teamcode.pipeline.TelemetryPipeline;
 import org.firstinspires.ftc.teamcode.utility.ButtonOnPress;
 import org.firstinspires.ftc.teamcode.utility.ButtonToggle;
+import org.firstinspires.ftc.teamcode.utility.GampadUtils;
 import org.firstinspires.ftc.teamcode.utility.HardwareConstants;
 import org.firstinspires.ftc.teamcode.utility.Supervisor;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 @TeleOp(name = "Competition TeleOp")
 public class CompOpMode extends OpMode{
@@ -57,17 +58,14 @@ public class CompOpMode extends OpMode{
     }
 
     // PRIMARY CONTROLLER
-    final ButtonToggle intakeXToggle = new ButtonToggle(X, false);
-    final ButtonToggle flyWheelRBumperToggle = new ButtonToggle(RIGHT_BUMPER, false);
-    final ButtonToggle kickerBToggle = new ButtonToggle(B, false);
-    final ButtonToggle testRightToggle = new ButtonToggle(RIGHT_STICK_BUTTON, false);
     final ButtonToggle throttleLeftStickToggle = new ButtonToggle(LEFT_STICK_BUTTON, true);
+
 
     // SECONDARY CONTROLLER
     final ButtonOnPress stickPowerAPress = new ButtonOnPress(A);
-
     final ButtonOnPress precisePowerBPress = new ButtonOnPress(B);
     final ButtonOnPress posXPress = new ButtonOnPress(X);
+    final ButtonToggle testRightStickToggle = new ButtonToggle(RIGHT_STICK_BUTTON, false);
 
 
     @SuppressWarnings("unused")
@@ -80,7 +78,6 @@ public class CompOpMode extends OpMode{
     final ButtonOnPress halveDeltaOnPress = new ButtonOnPress(DPAD_LEFT);
 
     GamepadEx primaryCtrl, secondaryCtrl;
-    double flyWheelCurrent = 0;
 
     @FunctionalInterface
     private interface Double2Double {double map(double x);}
@@ -106,14 +103,14 @@ public class CompOpMode extends OpMode{
         }
         // Don't get rid of this. Very useful for figuring out if the issue is the configuration or
         // if one of the bevel gears is on backwards.
-        if (testRightToggle.check(primaryCtrl)) {
-            boolean fl = primaryCtrl.getButton(A),
-                    fr = primaryCtrl.getButton(B),
-                    bl = primaryCtrl.getButton(X),
-                    br = primaryCtrl.getButton(Y);
+        if (testRightStickToggle.check(secondaryCtrl)) {
+            boolean fl = secondaryCtrl.getButton(A),
+                    fr = secondaryCtrl.getButton(B),
+                    bl = secondaryCtrl.getButton(X),
+                    br = secondaryCtrl.getButton(Y);
             drive.driveWithMotorPowers(fl ? 1 : 0, fr ? 1 : 0, bl ? 1 : 0, br ? 1 : 0);
 
-            telemetryPipeline.addHeader("PRESS RIGHT STICK TO EXIT");
+            telemetryPipeline.addHeader("PRESS RIGHT STICK ON SECONDARY CONTROLLER TO EXIT");
             telemetryPipeline.addDataPoint("Testing", "Testing");
             telemetryPipeline.addDataPoint("fl", fl);
             telemetryPipeline.addDataPoint("fr", fr);
@@ -124,12 +121,12 @@ public class CompOpMode extends OpMode{
             return;
         }
 
-
-
-
         final double turnSpeed = gamepad1.right_trigger - gamepad1.left_trigger;
-        final double strafeSpeed = gamepadEx1.getLeftX();
-        final double forwardSpeed = gamepadEx1.getLeftY();
+//        final double forwardSpeed = gamepadEx1.getLeftY();
+//        final double strafeSpeed = gamepadEx1.getLeftX();
+        final double[] speeds = GampadUtils.speedInputs(primaryCtrl);
+        final double forwardSpeed = speeds[0];
+        final double strafeSpeed = speeds[1];
         final boolean throttleSpeed = throttleLeftStickToggle.check(primaryCtrl);
 
         drive.driveRobotCentric(
