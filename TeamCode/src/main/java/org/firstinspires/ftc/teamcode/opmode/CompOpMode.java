@@ -54,7 +54,7 @@ public class CompOpMode extends OpMode{
         primaryCtrl = gamepadEx1;
         secondaryCtrl = gamepadEx2;
 
-        cocker.setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
+        cocker.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         cocker.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
@@ -64,20 +64,19 @@ public class CompOpMode extends OpMode{
     final ButtonToggle kickerBToggle = new ButtonToggle(B, false);
     final ButtonToggle testRightToggle = new ButtonToggle(RIGHT_STICK_BUTTON, false);
     final ButtonToggle throttleLeftStickToggle = new ButtonToggle(LEFT_STICK_BUTTON, true);
-    final ButtonOnPress floorYOnPress = new ButtonOnPress(Y);
 
     // SECONDARY CONTROLLER
     final ButtonToggle holdFloorYToggle = new ButtonToggle(Y, false);
+
 
     @SuppressWarnings("unused")
     final ButtonOnPress incrementOnPress = new ButtonOnPress(DPAD_UP);
     @SuppressWarnings("unused")
     final ButtonOnPress decrementOnPress = new ButtonOnPress(DPAD_DOWN);
-
     @SuppressWarnings("unused")
-    final ButtonOnPress incrementOnPress = new ButtonOnPress(DP);
+    final ButtonOnPress doubleDeltaOnPress = new ButtonOnPress(DPAD_RIGHT);
     @SuppressWarnings("unused")
-    final ButtonOnPress decrementOnPress = new ButtonOnPress();
+    final ButtonOnPress halveDeltaOnPress = new ButtonOnPress(DPAD_LEFT);
 
     GamepadEx primaryCtrl, secondaryCtrl;
     double flyWheelCurrent = 0;
@@ -121,9 +120,9 @@ public class CompOpMode extends OpMode{
             return;
         }
 
-        if (incrementOnPress.check(secondaryCtrl)) {
+        if (doubleDeltaOnPress.check(secondaryCtrl)) {
             cockerPosDelta *= 2;
-        } else if (decrementOnPress.check(secondaryCtrl)) {
+        } else if (halveDeltaOnPress.check(secondaryCtrl)) {
             cockerPosDelta /= 2;
         }
         if (incrementOnPress.check(primaryCtrl)) {
@@ -149,7 +148,7 @@ public class CompOpMode extends OpMode{
         telemetryPipeline.addDataPoint("forward Speed", forwardSpeed);
         telemetryPipeline.addDataPoint("turn Speed", turnSpeed);
         telemetryPipeline.addDataPoint("strafe Speed", strafeSpeed);
-        telemetryPipeline.addDataPoint("real cocker pos", cocker.getCurrentPosition());
+        telemetryPipeline.addDataPoint("current cocker pos", cocker.getCurrentPosition());
         telemetryPipeline.addDataPoint("real cocker target", cocker.getTargetPosition());
         telemetryPipeline.addDataPoint("set cocker target", HardwareConstants.COCKER_POS_A);
         telemetryPipeline.refresh();
