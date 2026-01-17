@@ -73,13 +73,14 @@ public class CompOpMode extends OpMode{
     public void start() {
         cocker.setPower(0);
         cocker.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        conveyor.setTargetPosition(HardwareConstants.CONVEYOR_POS);
+        conveyor.setTargetPosition(-10);
         conveyor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     // PRIMARY CONTROLLER
     final ButtonToggle throttleLeftStickToggle = new ButtonToggle(LEFT_STICK_BUTTON, true);
     final ButtonOnPress wallXPress = new ButtonOnPress(X);
+    final ButtonOnPress conveyorYPress = new ButtonOnPress(Y);
 
 
     // SECONDARY CONTROLLER
@@ -182,26 +183,15 @@ public class CompOpMode extends OpMode{
         telemetryPipeline.addDataPoint("max safe current (mA)", cocker.getCurrentAlert(CurrentUnit.MILLIAMPS));
         telemetryPipeline.addDataPoint("real cocker power", cocker.getPower());
 
-
-
-        if (doubleDeltaOnPress.check(secondaryCtrl)) {
-            conveyorPosDelta *= 2;
-        } else if (halveDeltaOnPress.check(secondaryCtrl) && conveyorPosDelta/2 != 0) {
-            conveyorPosDelta /= 2;
+        if (conveyorYPress.checkWithin(primaryCtrl, 3000)) {
+            conveyor.setTargetPosition(HardwareConstants.CONVEYOR_TOP_POSITION);
+        } else {
+            conveyor.setTargetPosition(-10);
         }
-        if (incrementOnPress.check(secondaryCtrl)) {
-            HardwareConstants.CONVEYOR_POS += conveyorPosDelta;
-        } else if (decrementOnPress.check(secondaryCtrl)) {
-            HardwareConstants.CONVEYOR_POS -= conveyorPosDelta;
-        }
-
-        conveyor.setTargetPosition(HardwareConstants.CONVEYOR_POS);
 
 //        telemetryPipeline.addDataPoint("MODE", "target");
         telemetryPipeline.addDataPoint("current conveyor pos", cocker.getCurrentPosition());
-        telemetryPipeline.addDataPoint("real conveyor target", conveyor.getTargetPosition());
-        telemetryPipeline.addDataPoint("intended conveyor target", HardwareConstants.CONVEYOR_POS);
-        telemetryPipeline.addDataPoint("conveyor target delta", conveyorPosDelta);
+        telemetryPipeline.addDataPoint("conveyor target", conveyor.getTargetPosition());
 //        telemetryPipeline.addDataPoint("tolerance", conveyor.getTargetPositionTolerance());
 
 //        if (posXPress.check(secondaryCtrl)) {
