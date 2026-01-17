@@ -59,8 +59,7 @@ public class ResetMotorsPos extends LinearOpMode {
         int old;
         String reading = name+" reading";
         String oldReading = "old "+reading;
-        ElapsedTime timer = new ElapsedTime();
-;
+//        ElapsedTime timer = new ElapsedTime();
         do {
             old = readings[i];
             try {
@@ -73,7 +72,7 @@ public class ResetMotorsPos extends LinearOpMode {
             telemetry.addDataPointPerpetual(oldReading, old);
             telemetry.addDataPointPerpetual(reading, readings[i]);
             i = (i+1)%measurements;
-        } while (!withinTolerance(old, readings[i], posTolerance) || timer.seconds() < 3);
+        } while (!withinTolerance(old, readings[i], posTolerance));
 
         telemetry.removeDataPoint(reading);
     }
