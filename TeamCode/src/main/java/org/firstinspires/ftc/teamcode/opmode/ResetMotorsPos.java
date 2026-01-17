@@ -51,7 +51,8 @@ public class ResetMotorsPos extends LinearOpMode {
         }
         int i = 0;
         int old;
-        String pos = name+" pos";
+        String reading = name+" reading";
+        String oldReading = "reading "+name+" reading";
         do {
             old = readings[i];
             try {
@@ -61,11 +62,12 @@ public class ResetMotorsPos extends LinearOpMode {
                 throw new RuntimeException(e);
             }
             readings[i] = motor.getCurrentPosition();
-            telemetry.addDataPointPerpetual(pos, readings[i]);
+            telemetry.addDataPointPerpetual(reading, readings[i]);
+            telemetry.addDataPointPerpetual(oldReading, readings[i]);
             i = (i+1)%measurements;
         } while (withinTolerance(old, readings[i], posTolerance));
 
-        telemetry.removeDataPoint(pos);
+        telemetry.removeDataPoint(reading);
     }
 
     @SuppressWarnings("RedundantThrows")
@@ -118,7 +120,7 @@ public class ResetMotorsPos extends LinearOpMode {
                         cocker,
                         HardwareConstants.COCKER_WEAK_POWER,
                         telemetryPipeline,
-                        15,
+                        25,
                         5,
                         100
                 );
@@ -133,7 +135,7 @@ public class ResetMotorsPos extends LinearOpMode {
                     conveyor,
                     HardwareConstants.CONVEYOR_WEAK_POWER,
                     telemetryPipeline,
-                    15,
+                    25,
                     4,
                     100
             );
