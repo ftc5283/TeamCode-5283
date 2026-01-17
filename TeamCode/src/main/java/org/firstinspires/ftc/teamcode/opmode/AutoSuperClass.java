@@ -22,14 +22,9 @@ public abstract class AutoSuperClass extends LinearOpMode {
 
     protected TelemetryPipeline telemetryPipeline;
     protected HardwarePipeline drive;
-    protected final Supervisor supervisor = new Supervisor();
-
-    ElapsedTime timer;
 
     DcMotorEx cocker, conveyor;
     ServoImplEx wall;
-    VoltageSensor controlHub;
-
     MoveMotor cockerMove, conveyorMove;
 
     boolean shoot = false;
@@ -48,19 +43,15 @@ public abstract class AutoSuperClass extends LinearOpMode {
         telemetryPipeline = new TelemetryPipeline(telemetry);
         drive = new HardwarePipeline(hardwareMap);
 
-        timer = new ElapsedTime();
-
         cocker = hardwareMap.get(DcMotorEx.class, "cocker");
         cockerMove = new MotorActions(cocker, telemetryPipeline).moveMotor(
     (cocker.getCurrentPosition()/HardwareConstants.COCKER_360)*HardwareConstants.COCKER_360 +
-            HardwareConstants.COCKER_360/4
+            HardwareConstants.COCKER_360/6
         );
 
         conveyor = hardwareMap.get(DcMotorEx.class, "conveyor");
         conveyorMove = new MotorActions(conveyor, telemetryPipeline).moveMotor(0);
         conveyorMove.powerMultiplier = 0.25;
-
-        controlHub = hardwareMap.voltageSensor.get("Control Hub");
 
         if (startParallelTelemetry) {
             this.startParallelTelemetry();
@@ -105,6 +96,7 @@ public abstract class AutoSuperClass extends LinearOpMode {
                 op.wall.setPosition(0);
             }
         });
+        loadAndLaunch.start();
     }
 
     /// angle is the angle to the line extending out the front of the robot
@@ -117,7 +109,7 @@ public abstract class AutoSuperClass extends LinearOpMode {
     }
 
     public void startParallelTelemetry() {
-        LinearOpMode auto = this;
+        AutoSuperClass auto = this;
         Thread telemetryThread = new Thread() {
             @Override
             public void run(){
