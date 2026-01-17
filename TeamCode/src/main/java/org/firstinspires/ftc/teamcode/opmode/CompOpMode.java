@@ -48,7 +48,11 @@ public class CompOpMode extends OpMode{
 //        cocker = AutoSuperClass.getCocker(hardwareMap);
         cocker = hardwareMap.get(DcMotorEx.class, "cocker");
         cocker.setPower(0.05);
+
         conveyor = hardwareMap.get(DcMotorEx.class, "conveyor");
+        conveyor.setTargetPosition(0);
+        conveyor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
         wall = hardwareMap.get(ServoImplEx.class, "wall");
 
         telemetryPipeline.addDataPointPerpetual("init position", cocker.getCurrentPosition());
