@@ -55,7 +55,7 @@ public class CompOpMode extends OpMode{
         cocker = hardwareMap.get(DcMotorEx.class, "cocker");
 //        cocker.setPower(0.05);
 //        cockerActions = new MotorActions(cocker, telemetryPipeline);
-        cockerMove = new MotorActions(cocker, telemetryPipeline).moveMotor(0);
+        cockerMove = new MotorActions(cocker, telemetryPipeline).moveMotor(HardwareConstants.COCKER_360/4);
 
         conveyor = hardwareMap.get(DcMotorEx.class, "conveyor");
         conveyorMove = new MotorActions(conveyor, telemetryPipeline).moveMotor(0);
@@ -169,14 +169,15 @@ public class CompOpMode extends OpMode{
         );
 
         if (cockerAPress.check(primaryCtrl) || this.justFired) {
-            if (isCocked) {
-                cockerMove.targetPos += 3*HardwareConstants.COCKER_360/4;
-                this.justFired = true;
-            } else {
-                cockerMove.targetPos += HardwareConstants.COCKER_360/4;
-                justFired = false;
-            }
-            isCocked = !isCocked;
+//            if (isCocked) {
+//                cockerMove.targetPos += 3*HardwareConstants.COCKER_360/4;
+//                this.justFired = true;
+//            } else {
+//                cockerMove.targetPos += HardwareConstants.COCKER_360/4;
+//            }
+//            isCocked = !isCocked;
+            cockerMove.targetPos += HardwareConstants.COCKER_360;
+            this.justFired = true;
         }
         cockerMove.run();
 
