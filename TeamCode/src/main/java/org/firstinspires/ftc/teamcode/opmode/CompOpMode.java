@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -30,6 +31,7 @@ public class CompOpMode extends OpMode{
 
     GamepadEx gamepadEx1, gamepadEx2;
     DcMotorEx cocker;
+    ServoImplEx wall;
     VoltageSensor controlHub;
 
     @Override
@@ -45,6 +47,7 @@ public class CompOpMode extends OpMode{
 
 //        cocker = AutoSuperClass.getCocker(hardwareMap);
         cocker = hardwareMap.get(DcMotorEx.class, "cocker");
+        wall = hardwareMap.get(ServoImplEx.class, "wall");
 
         telemetryPipeline.addDataPointPerpetual("init position", cocker.getCurrentPosition());
         telemetryPipeline.addDataPointPerpetual("init target position", cocker.getTargetPosition());
@@ -54,11 +57,11 @@ public class CompOpMode extends OpMode{
 
         primaryCtrl = gamepadEx1;
         secondaryCtrl = gamepadEx2;
-
     }
 
     // PRIMARY CONTROLLER
     final ButtonToggle throttleLeftStickToggle = new ButtonToggle(LEFT_STICK_BUTTON, true);
+    final ButtonOnPress wallXPress = new ButtonOnPress(X);
 
 
     // SECONDARY CONTROLLER
@@ -119,6 +122,13 @@ public class CompOpMode extends OpMode{
 
             telemetryPipeline.refresh();
             return;
+        }
+
+        if (wallXPress.checkWithin(primaryCtrl, 2500)) {
+            // i assume is 300 degrees
+            wall.setPosition(90.0/300);
+        } else {
+            wall.setPosition(0);
         }
 
         final double turnSpeed = gamepad1.right_trigger - gamepad1.left_trigger;
