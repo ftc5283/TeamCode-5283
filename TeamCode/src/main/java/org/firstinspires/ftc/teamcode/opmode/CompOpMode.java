@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.utility.ButtonOnPress;
 import org.firstinspires.ftc.teamcode.utility.ButtonToggle;
 import org.firstinspires.ftc.teamcode.utility.GampadUtils;
 import org.firstinspires.ftc.teamcode.utility.HardwareConstants;
+import org.firstinspires.ftc.teamcode.utility.Misc;
 import org.firstinspires.ftc.teamcode.utility.Supervisor;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
@@ -201,12 +202,16 @@ public class CompOpMode extends OpMode{
             conveyor.setTargetPosition(-HardwareConstants.CONVEYOR_TOP_POSITION);
             conveyor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             telemetryPipeline.addDataPoint("Conveyor goal", -HardwareConstants.CONVEYOR_TOP_POSITION);
+        } else if (secondaryCtrl.getButton(DPAD_UP) || secondaryCtrl.getButton(DPAD_DOWN)){
+            conveyor.setPower(Misc.cast(secondaryCtrl.getButton(DPAD_DOWN)) - Misc.cast(secondaryCtrl.getButton(DPAD_UP)));
         } else {
             conveyor.setTargetPosition(-12);
             conveyor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             telemetryPipeline.addDataPoint("Conveyor goal", -12);
         }
 //        telemetryPipeline.addDataPoint("MODE", "target");
+        telemetryPipeline.addDataPoint("tolerance", conveyor.getTargetPositionTolerance());
+        telemetryPipeline.addDataPoint("tolerance", conveyor.getTargetPositionTolerance());
         telemetryPipeline.addDataPoint("conveyor pos", cocker.getCurrentPosition());
         telemetryPipeline.addDataPoint("conveyor target", conveyor.getTargetPosition());
 //        telemetryPipeline.addDataPoint("tolerance", conveyor.getTargetPositionTolerance());
