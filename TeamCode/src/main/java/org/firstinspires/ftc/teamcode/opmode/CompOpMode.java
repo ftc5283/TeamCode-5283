@@ -168,12 +168,13 @@ public class CompOpMode extends OpMode{
             squareInputs
         );
 
-        if (cockerAPress.check(primaryCtrl)) {
+        if (cockerAPress.check(primaryCtrl) || this.justFired) {
             if (isCocked) {
                 cockerMove.targetPos += 3*HardwareConstants.COCKER_360/4;
                 this.justFired = true;
             } else {
                 cockerMove.targetPos += HardwareConstants.COCKER_360/4;
+                justFired = false;
             }
             isCocked = !isCocked;
         }
@@ -181,7 +182,6 @@ public class CompOpMode extends OpMode{
 
         if (conveyorYPress.check(primaryCtrl) ||  (justFired && cockerMove.within())) {
             conveyorTimer = System.currentTimeMillis();
-            justFired = false;
         }
 
         if (conveyorTimer + 1000 >= System.currentTimeMillis()) {
