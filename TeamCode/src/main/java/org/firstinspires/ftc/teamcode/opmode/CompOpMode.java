@@ -57,10 +57,10 @@ public class CompOpMode extends OpMode{
 //        cocker.setPower(0.05);
 //        cockerActions = new MotorActions(cocker, telemetryPipeline);
         cockerMove = new MotorActions(cocker, telemetryPipeline).moveMotor(0);
-        cockerMove.powerMultiplier = 0.25;
 
         conveyor = hardwareMap.get(DcMotorEx.class, "conveyor");
         conveyorMove = new MotorActions(conveyor, telemetryPipeline).moveMotor(0);
+        conveyorMove.powerMultiplier = 0.25;
 
         wall = hardwareMap.get(ServoImplEx.class, "wall");
         wall.setDirection(Servo.Direction.REVERSE);

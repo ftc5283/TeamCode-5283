@@ -32,12 +32,12 @@ public class ButtonOnPress {
         boolean isHeld = ctrl.getButton(button);
         if(isStickButton) {
             long now = System.currentTimeMillis();
-            boolean withTolerance = now - lastPressed > 100;
-            if(!isHeld && withTolerance)
-                return lastValue;
+            boolean withinTolerance = now - lastPressed > 100;
+            if(!isHeld || withinTolerance)
+                return false;
             // stick buttons are really finicky and when held down they often will be read as
             // briefly not being held down so this adds tolerance so it doesn't constantly swap
-            lastValue = now - lastPressed > 100;
+            lastValue = true;
             lastPressed = now;
         } else {
             if (isHeld) {
