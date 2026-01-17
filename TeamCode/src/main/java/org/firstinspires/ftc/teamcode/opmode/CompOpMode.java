@@ -114,8 +114,8 @@ public class CompOpMode extends OpMode{
     private interface Double2Double {double map(double x);}
     final boolean squareInputs = true;
     final Double2Double squareInputsCorrection = (squareInputs ? (double x) -> x : Math::sqrt);
-    final double throttleStrafe = squareInputsCorrection.map(0.5);
-    final double throttleForwardBack = squareInputsCorrection.map(0.5);
+    final double throttleStrafe = squareInputsCorrection.map(0.6);
+    final double throttleForwardBack = squareInputsCorrection.map(0.6);
     final double throttleTurn = squareInputsCorrection.map(0.55);
 
     boolean isCocked = false;
