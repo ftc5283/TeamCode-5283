@@ -77,6 +77,7 @@ public class CompOpMode extends OpMode{
     final ButtonToggle throttleLeftStickToggle = new ButtonToggle(LEFT_STICK_BUTTON, true);
     final ButtonOnPress wallXPress = new ButtonOnPress(X);
     final ButtonOnPress conveyorYPress = new ButtonOnPress(Y);
+    final ButtonOnPress conveyorBPress = new ButtonOnPress(B);
 
 
     // SECONDARY CONTROLLER
@@ -172,20 +173,23 @@ public class CompOpMode extends OpMode{
         telemetryPipeline.addDataPoint("turn Speed", turnSpeed);
         telemetryPipeline.addDataPoint("strafe Speed", strafeSpeed);
 
-        telemetryPipeline.addDataPoint("current cocker pos", cocker.getCurrentPosition());
-        telemetryPipeline.addDataPoint("cocker current (mA)", cocker.getCurrent(CurrentUnit.MILLIAMPS));
-        telemetryPipeline.addDataPoint("max safe current (mA)", cocker.getCurrentAlert(CurrentUnit.MILLIAMPS));
-        telemetryPipeline.addDataPoint("real cocker power", cocker.getPower());
+//        telemetryPipeline.addDataPoint("current cocker pos", cocker.getCurrentPosition());
+//        telemetryPipeline.addDataPoint("cocker current (mA)", cocker.getCurrent(CurrentUnit.MILLIAMPS));
+//        telemetryPipeline.addDataPoint("max safe current (mA)", cocker.getCurrentAlert(CurrentUnit.MILLIAMPS));
+//        telemetryPipeline.addDataPoint("real cocker power", cocker.getPower());
 
         if (conveyorYPress.checkWithin(primaryCtrl, 3000)) {
             conveyor.setTargetPosition(HardwareConstants.CONVEYOR_TOP_POSITION);
             telemetryPipeline.addDataPoint("Conveyor goal", HardwareConstants.CONVEYOR_TOP_POSITION);
+        } else if (conveyorBPress.checkWithin(primaryCtrl, 3000)) {
+            conveyor.setTargetPosition(-HardwareConstants.CONVEYOR_TOP_POSITION);
+            telemetryPipeline.addDataPoint("Conveyor goal", -HardwareConstants.CONVEYOR_TOP_POSITION);
         } else {
             conveyor.setTargetPosition(-12);
-            telemetryPipeline.addDataPoint("Conveyor goal", HardwareConstants.CONVEYOR_TOP_POSITION);
+            telemetryPipeline.addDataPoint("Conveyor goal", -12);
         }
 //        telemetryPipeline.addDataPoint("MODE", "target");
-        telemetryPipeline.addDataPoint("current conveyor pos", cocker.getCurrentPosition());
+        telemetryPipeline.addDataPoint("conveyor pos", cocker.getCurrentPosition());
         telemetryPipeline.addDataPoint("conveyor target", conveyor.getTargetPosition());
 //        telemetryPipeline.addDataPoint("tolerance", conveyor.getTargetPositionTolerance());
 
