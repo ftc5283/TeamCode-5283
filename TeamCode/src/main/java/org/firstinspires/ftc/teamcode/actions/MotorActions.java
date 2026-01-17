@@ -76,12 +76,17 @@ public class MotorActions {
         public int targetPos, tolerance, damping;
         protected ReferenceInt targetPosRef, toleranceRef, dampingRef;
         public final ElapsedTime lastRun;
-        public double speedMultiplier = 1;
+        public double powerMultiplier;
         MoveMotor(int targetPosition, int tolerance, int damping){
+            this(targetPosition, tolerance, damping, 1);
+        }
+        MoveMotor(int targetPosition, int tolerance, int damping, double powerMultiplier){
+
             this.targetPos = targetPosition;
             this.targetPosRef = null;
             this.tolerance = tolerance;
             this.damping = damping;
+            this.powerMultiplier = powerMultiplier;
             lastRun = new ElapsedTime();
         }
 
@@ -140,21 +145,21 @@ public class MotorActions {
             }
         }
 
-        public boolean slow(){
+        public boolean isSlow(){
             int pos = motor.getCurrentPosition();
             int targetPosition = getTarget();
             int slowTolerance = Math.max(damping/2, this.tolerance);
             return pos <= targetPosition + slowTolerance && pos + slowTolerance >= targetPosition;
         }
 
-        public boolean slow(double tolerance){
+        public boolean isSlow(double tolerance){
             int pos = motor.getCurrentPosition();
             int targetPosition = getTarget();
             double slowTolerance = Math.max(damping*tolerance, this.tolerance);
             return pos <= targetPosition + slowTolerance && pos + slowTolerance >= targetPosition;
         }
 
-        public boolean dampened(){
+        public boolean isDampened(){
             int pos = motor.getCurrentPosition();
             int targetPosition = getTarget();
             int tolerance = Math.max(damping, this.tolerance);
@@ -235,8 +240,8 @@ public class MotorActions {
                 telemetry.addDataPointPerpetual(targetKey, target);
                 telemetry.addDataPointPerpetual(slowUpperKey, target + slowTolerance);
                 telemetry.addDataPointPerpetual(slowLowerKey, target - slowTolerance);
-                telemetry.addDataPointPerpetual(slowKey, moveMotor.slow());
-                telemetry.addDataPointPerpetual(dampenedKey, moveMotor.dampened());
+                telemetry.addDataPointPerpetual(slowKey, moveMotor.isSlow());
+                telemetry.addDataPointPerpetual(dampenedKey, moveMotor.isDampened());
             }
             return Status.RUNNING;
         }
@@ -306,7 +311,7 @@ public class MotorActions {
         return moveMotorTask;
     }
     public Task getMoveMotorTaskPerpetual(double speedMult){
-        moveMotor.speedMultiplier = speedMult;
+        moveMotor.powerMultiplier = speedMult;
         if(moveMotorTask == null)
             moveMotorTask = ActionWrapper.toPerpetualTask(moveMotor, "Move "+motorName, telemetry);
         return moveMotorTask;
@@ -319,9 +324,9 @@ public class MotorActions {
         return waitMotorTask;
     }
     public boolean slow(){
-        return moveMotor.slow();
+        return moveMotor.isSlow();
     }
     public boolean slow(double tolerance){
-        return moveMotor.slow(tolerance);
+        return moveMotor.isSlow(tolerance);
     }
 }
