@@ -54,12 +54,14 @@ public class CompOpMode extends OpMode{
         cockerMove = new MotorActions(cocker, telemetryPipeline)
             .moveMotor(
                 (cocker.getCurrentPosition()/HardwareConstants.COCKER_360)*HardwareConstants.COCKER_360 +
-                HardwareConstants.COCKER_360/6
+                    HardwareConstants.COCKER_COCKED
             );
+        cocker.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         conveyor = hardwareMap.get(DcMotorEx.class, "conveyor");
         conveyorMove = new MotorActions(conveyor, telemetryPipeline).moveMotor(0);
         conveyorMove.powerMultiplier = 0.25;
+        conveyor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         wall = hardwareMap.get(ServoImplEx.class, "wall");
         wall.setDirection(Servo.Direction.REVERSE);
@@ -72,15 +74,7 @@ public class CompOpMode extends OpMode{
 
         primaryCtrl = gamepadEx1;
         secondaryCtrl = gamepadEx2;
-
-        conveyor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        cocker.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-
-//    @Override
-//    public void start() {
-//
-//    }
 
 
     // PRIMARY CONTROLLER
@@ -185,6 +179,7 @@ public class CompOpMode extends OpMode{
             this.justFired = false;
             conveyorTimer = System.currentTimeMillis();
         }
+        conveyorMove.run();
 
         if (conveyorTimer + 1000 >= System.currentTimeMillis()) {
             conveyorMove.targetPos = HardwareConstants.CONVEYOR_TOP_POSITION;
@@ -198,7 +193,6 @@ public class CompOpMode extends OpMode{
             conveyorMove.targetPos = 70*Misc.sgn(HardwareConstants.CONVEYOR_TOP_POSITION);
             telemetryPipeline.addDataPoint("Conveyor goal", conveyorMove.targetPos);
         }
-        conveyorMove.run();
 
         if (wallXPress.check(primaryCtrl) || (justLifted && conveyorMove.within())) {
             justLifted = false;

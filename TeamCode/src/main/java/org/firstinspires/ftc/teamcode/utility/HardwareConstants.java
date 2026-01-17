@@ -7,7 +7,8 @@ public class HardwareConstants {
 //    public static int COCKER_TEETH_LENGTH = 3800-2500;
 
     @SuppressWarnings("UnnecessaryUnaryMinus")
-    public static int COCKER_360 = 1252 - -185;
+    public static final int COCKER_360 = 1252 - -185;
+    public static final int COCKER_COCKED = COCKER_360/5;
     public static final double COCKER_WEAK_POWER = 0.05;
     public static final double CONVEYOR_WEAK_POWER = 0.05;
     public static final boolean INVERT_RIGHT_SIDE = true;
