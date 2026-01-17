@@ -184,6 +184,7 @@ public class CompOpMode extends OpMode{
         } else if (conveyorBPress.checkWithin(primaryCtrl, 3000)) {
             conveyor.setTargetPosition(-HardwareConstants.CONVEYOR_TOP_POSITION);
             telemetryPipeline.addDataPoint("Conveyor goal", -HardwareConstants.CONVEYOR_TOP_POSITION);
+            throw new RuntimeException("wut");
         } else {
             conveyor.setTargetPosition(-12);
             telemetryPipeline.addDataPoint("Conveyor goal", -12);
