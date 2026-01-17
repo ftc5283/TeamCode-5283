@@ -55,12 +55,13 @@ public class ResetMotorsPos extends LinearOpMode {
                 throw new RuntimeException(e);
             }
         }
-        int i = 0;
+        int i = measurements-1;
         int old;
         String reading = name+" reading";
         String oldReading = "old "+reading;
 //        ElapsedTime timer = new ElapsedTime();
         do {
+            i = (i+1)%measurements;
             old = readings[i];
             try {
                 //noinspection BusyWait//
@@ -71,10 +72,7 @@ public class ResetMotorsPos extends LinearOpMode {
             readings[i] = motor.getCurrentPosition();
             telemetry.addDataPointPerpetual(oldReading, old);
             telemetry.addDataPointPerpetual(reading, readings[i]);
-            i = (i+1)%measurements;
         } while (!withinTolerance(old, readings[i], posTolerance));
-
-        telemetry.removeDataPoint(reading);
     }
 
     @SuppressWarnings("RedundantThrows")
