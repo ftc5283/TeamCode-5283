@@ -186,6 +186,7 @@ public class CompOpMode extends OpMode{
         cockerMove.run();
 
         if (conveyorYPress.check(primaryCtrl) ||  (justFired && cockerMove.within())) {
+            this.justFired = false;
             conveyorTimer = System.currentTimeMillis();
         }
 
