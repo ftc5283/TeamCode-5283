@@ -41,13 +41,4 @@ public class HardwarePipeline extends MecanumDrive {
     public void stopAll() {
         dcDrive.stopMotor();
     }
-
-    @Override
-    public void driveRobotCentric(double strafeSpeed, double forwardSpeed, double turnSpeed) {
-        if(INVERT_LEFT_SIDE) {
-            super.driveRobotCentric(-strafeSpeed, -forwardSpeed, -turnSpeed);
-        } else {
-            super.driveRobotCentric(strafeSpeed, forwardSpeed, turnSpeed);
-        }
-    }
 }

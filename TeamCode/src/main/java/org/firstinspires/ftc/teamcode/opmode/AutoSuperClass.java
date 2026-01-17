@@ -30,6 +30,7 @@ public abstract class AutoSuperClass extends LinearOpMode {
 
     public static DcMotorEx getCocker(HardwareMap hardwareMap) {
         DcMotorEx cocker = hardwareMap.get(DcMotorEx.class, "cocker");
+        cocker.setTargetPosition(0);
         cocker.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         cocker.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         return cocker;

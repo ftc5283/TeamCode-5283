@@ -112,9 +112,13 @@ public class DriveActions {
             this.perpReadings = new int[storeLength];
 
             this.startTolerance = startTolerance +
-                    Math.max(Math.abs(par0.getCurrentPosition()),
-                            Math.max(Math.abs(par1.getCurrentPosition()),
-                                    Math.abs(perp.getCurrentPosition())));
+                    Math.max(
+                            Math.abs(par0.getCurrentPosition()),
+                            Math.max(
+                                    Math.abs(par1.getCurrentPosition()),
+                                    Math.abs(perp.getCurrentPosition())
+                            )
+                    );
             this.endTolerance = endTolerance;
 
             this.forwardSpeed = forwardSpeed;
