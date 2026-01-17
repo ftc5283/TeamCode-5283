@@ -172,7 +172,7 @@ public class CompOpMode extends OpMode{
             squareInputs
         );
 
-        if (cockerAPress.check(primaryCtrl) || this.justFired) {
+        if (cockerAPress.check(primaryCtrl)) {
 //            if (isCocked) {
 //                cockerMove.targetPos += 3*HardwareConstants.COCKER_360/4;
 //                this.justFired = true;
