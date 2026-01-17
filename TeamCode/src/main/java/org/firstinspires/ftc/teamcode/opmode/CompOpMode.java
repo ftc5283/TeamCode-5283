@@ -45,7 +45,6 @@ public class CompOpMode extends OpMode{
         gamepadEx1 = new GamepadEx(gamepad1);
         gamepadEx2 = new GamepadEx(gamepad2);
 
-        wall.setDirection(Servo.Direction.REVERSE);
 
 //        cocker = AutoSuperClass.getCocker(hardwareMap);
         cocker = hardwareMap.get(DcMotorEx.class, "cocker");
@@ -54,6 +53,7 @@ public class CompOpMode extends OpMode{
         conveyor = hardwareMap.get(DcMotorEx.class, "conveyor");
 
         wall = hardwareMap.get(ServoImplEx.class, "wall");
+        wall.setDirection(Servo.Direction.REVERSE);
 
         telemetryPipeline.addDataPointPerpetual("init position", cocker.getCurrentPosition());
         telemetryPipeline.addDataPointPerpetual("init target position", cocker.getTargetPosition());
