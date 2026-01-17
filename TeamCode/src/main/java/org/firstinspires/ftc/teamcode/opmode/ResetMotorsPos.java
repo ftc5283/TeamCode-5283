@@ -52,7 +52,7 @@ public class ResetMotorsPos extends LinearOpMode {
         int i = 0;
         int old;
         String reading = name+" reading";
-        String oldReading = "reading "+name+" reading";
+        String oldReading = "old "+name+" reading";
         do {
             old = readings[i];
             try {
