@@ -7,4 +7,8 @@ public final class Misc {
     public static boolean withinTolerance(int a, int b, int tolerance) {
         return  b - tolerance < a && a < b + tolerance;
     }
+
+    public static int sgn(int k){
+        return Integer.compare(k, 0);
+    }
 }

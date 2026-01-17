@@ -22,7 +22,6 @@ import org.firstinspires.ftc.teamcode.utility.GampadUtils;
 import org.firstinspires.ftc.teamcode.utility.HardwareConstants;
 import org.firstinspires.ftc.teamcode.utility.Misc;
 import org.firstinspires.ftc.teamcode.utility.Supervisor;
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.actions.MotorActions.MoveMotor;
 
 @TeleOp(name = "Competition TeleOp")
@@ -194,10 +193,10 @@ public class CompOpMode extends OpMode{
 
         if (conveyorYPress.checkWithin(primaryCtrl, 1000)) {
             conveyorMove.targetPos = HardwareConstants.CONVEYOR_TOP_POSITION;
-            telemetryPipeline.addDataPoint("Conveyor goal", HardwareConstants.CONVEYOR_TOP_POSITION);
+            telemetryPipeline.addDataPoint("Conveyor goal", conveyorMove.targetPos);
         } else {
-            conveyorMove.targetPos = -12;
-            telemetryPipeline.addDataPoint("Conveyor goal", -12);
+            conveyorMove.targetPos = 30*Misc.sgn(HardwareConstants.CONVEYOR_TOP_POSITION);
+            telemetryPipeline.addDataPoint("Conveyor goal", conveyorMove.targetPos);
         }
         conveyorMove.run();
 
