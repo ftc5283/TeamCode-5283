@@ -29,6 +29,8 @@ public class ResetMotorsPos extends LinearOpMode {
     SimpleAtomicBool cockerComplete = new SimpleAtomicBool();
     SimpleAtomicBool conveyorComplete = new SimpleAtomicBool();
 
+    final int posTolerance = 25;
+
     public static void motorRunTillCollision(
             String name,
             DcMotorEx motor,
@@ -99,7 +101,7 @@ public class ResetMotorsPos extends LinearOpMode {
                     cocker,
                     HardwareConstants.COCKER_WEAK_POWER,
                     telemetryPipeline,
-                    15,
+                    25,
                     5,
                     100
             );
@@ -120,7 +122,7 @@ public class ResetMotorsPos extends LinearOpMode {
                         cocker,
                         HardwareConstants.COCKER_WEAK_POWER,
                         telemetryPipeline,
-                        15,
+                        25,
                         5,
                         100
                 );
@@ -135,7 +137,7 @@ public class ResetMotorsPos extends LinearOpMode {
                     conveyor,
                     HardwareConstants.CONVEYOR_WEAK_POWER,
                     telemetryPipeline,
-                    15,
+                    25,
                     5,
                     100
             );

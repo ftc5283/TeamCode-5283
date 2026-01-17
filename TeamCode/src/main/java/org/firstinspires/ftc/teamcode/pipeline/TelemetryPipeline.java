@@ -135,7 +135,7 @@ public class TelemetryPipeline{
      *              Example: {@code 3}. Can be a primitive.
      *
      * @return {@code true} if the key is new. <br>
-     *         {@code false} if the value of an already existing data point is set.
+     *         {@code false} if the key already existed.
      *
      * @see TelemetryPipeline#removeDataPoint(String)
      * @see TelemetryPipeline#addDataPointPerpetual(String, Object)
@@ -164,12 +164,26 @@ public class TelemetryPipeline{
      *
      * @param header The text of the header.
      *
+     * @return {@code true} if the key is new. <br>
+     *         {@code false} if the key already existed.
+     *
      * @see TelemetryPipeline#addHeader(String)
      * @see TelemetryPipeline#removeHeader(String)
      */
-    public void addHeaderPerpetual(@NonNull String header) {
-        keys.add(header);
-        data.add(null);
+    public boolean addHeaderPerpetual(@NonNull String header) {
+        int i = 0;
+        header = header.intern();
+        for(; i<keys.size(); i++)
+            if(keys.get(i) == header)
+                break;
+        if(i == keys.size()) {
+            keys.add(header);
+            data.add(null);
+            return true;
+        } else {
+            data.set(i, null);
+            return false;
+        }
     }
 
     /**
