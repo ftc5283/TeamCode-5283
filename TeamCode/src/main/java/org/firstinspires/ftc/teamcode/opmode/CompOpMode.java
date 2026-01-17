@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -44,14 +45,13 @@ public class CompOpMode extends OpMode{
         gamepadEx1 = new GamepadEx(gamepad1);
         gamepadEx2 = new GamepadEx(gamepad2);
 
+        wall.setDirection(Servo.Direction.REVERSE);
 
 //        cocker = AutoSuperClass.getCocker(hardwareMap);
         cocker = hardwareMap.get(DcMotorEx.class, "cocker");
-        cocker.setPower(0.05);
+//        cocker.setPower(0.05);
 
         conveyor = hardwareMap.get(DcMotorEx.class, "conveyor");
-        conveyor.setTargetPosition(0);
-        conveyor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         wall = hardwareMap.get(ServoImplEx.class, "wall");
 
@@ -64,18 +64,14 @@ public class CompOpMode extends OpMode{
         primaryCtrl = gamepadEx1;
         secondaryCtrl = gamepadEx2;
 
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException ignored){}
     }
 
     @Override
     public void start() {
-        cocker.setPower(0);
-        cocker.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        conveyor.setTargetPosition(-10);
+        conveyor.setTargetPosition(-12);
         conveyor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
+
 
     // PRIMARY CONTROLLER
     final ButtonToggle throttleLeftStickToggle = new ButtonToggle(LEFT_STICK_BUTTON, true);
@@ -109,8 +105,8 @@ public class CompOpMode extends OpMode{
     final double throttleForwardBack = squareInputsCorrection.map(0.5);
     final double throttleTurn = squareInputsCorrection.map(0.55);
 
-    int conveyorPosDelta = 128;
-//    double conveyorPowerDelta = 0.25;
+//    int cockerPosDelta = 128;
+//    double cockerPowerDelta = 0.25;
 //
 //    int mode = -1;
 
@@ -185,10 +181,11 @@ public class CompOpMode extends OpMode{
 
         if (conveyorYPress.checkWithin(primaryCtrl, 3000)) {
             conveyor.setTargetPosition(HardwareConstants.CONVEYOR_TOP_POSITION);
+            telemetryPipeline.addDataPoint("Conveyor goal", HardwareConstants.CONVEYOR_TOP_POSITION);
         } else {
-            conveyor.setTargetPosition(-10);
+            conveyor.setTargetPosition(-12);
+            telemetryPipeline.addDataPoint("Conveyor goal", HardwareConstants.CONVEYOR_TOP_POSITION);
         }
-
 //        telemetryPipeline.addDataPoint("MODE", "target");
         telemetryPipeline.addDataPoint("current conveyor pos", cocker.getCurrentPosition());
         telemetryPipeline.addDataPoint("conveyor target", conveyor.getTargetPosition());

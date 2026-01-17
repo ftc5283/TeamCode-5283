@@ -77,7 +77,6 @@ public abstract class AutoSuperClass extends LinearOpMode {
                 while (!auto.isStopRequested()) {
                     telemetryPipeline.addDataPointPerpetual("real cocker pos", cocker.getCurrentPosition());
                     telemetryPipeline.addDataPointPerpetual("real cocker target", cocker.getTargetPosition());
-                    telemetryPipeline.addDataPointPerpetual("set cocker target", HardwareConstants.CONVEYOR_POS);
                     telemetryPipeline.addDataPoint("cocker current (mA)", cocker.getCurrent(CurrentUnit.MILLIAMPS));
                     telemetryPipeline.addDataPoint("max safe current (mA)", cocker.getCurrentAlert(CurrentUnit.MILLIAMPS));
                     telemetryPipeline.refresh();
