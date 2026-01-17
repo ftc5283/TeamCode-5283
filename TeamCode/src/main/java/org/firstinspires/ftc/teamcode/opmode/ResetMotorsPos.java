@@ -111,32 +111,36 @@ public class ResetMotorsPos extends LinearOpMode {
                 measures,
                 timeRes
             );
-            if (withinTolerance(cockerInitPos,  cocker.getCurrentPosition(), 25)) {
-                cocker.setTargetPosition(cocker.getCurrentPosition() + HardwareConstants.COCKER_TEETH_LENGTH);
-                cocker.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                String busyHeader = "Cocker appears to have started meshed. Moving out of meshed position";
-                while (cocker.isBusy()) {
-                    telemetryPipeline.addHeaderPerpetual(busyHeader);
-                }
-                telemetryPipeline.removeHeader(busyHeader);
+//            if (withinTolerance(cockerInitPos,  cocker.getCurrentPosition(), 25)) {
+//                cocker.setTargetPosition(cocker.getCurrentPosition() + HardwareConstants.COCKER_TEETH_LENGTH);
+//                cocker.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//
+//                String busyHeader = "Cocker appears to have started meshed. Moving out of meshed position";
+//                while (cocker.isBusy()) {
+//                    telemetryPipeline.addHeaderPerpetual(busyHeader);
+//                }
+//                telemetryPipeline.removeHeader(busyHeader);
+//
+//                String lowPower = "Cocker moving into position";
+//                telemetryPipeline.addHeaderPerpetual(lowPower);
+//                motorRunTillCollision(
+//                        "Cocker",
+//                        cocker,
+//                        HardwareConstants.COCKER_WEAK_POWER,
+//                        telemetryPipeline,
+//                        tolerance,
+//                        measures,
+//                        timeRes
+//                );
+//
+//            }
+//            cocker.setPower(0);
 
-                String lowPower = "Cocker moving into position";
-                telemetryPipeline.addHeaderPerpetual(lowPower);
-                motorRunTillCollision(
-                    "Cocker",
-                    cocker,
-                    HardwareConstants.COCKER_WEAK_POWER,
-                    telemetryPipeline,
-                    tolerance,
-                    measures,
-                    timeRes
-                );
-
-            }
-            cocker.setPower(0);
             cockerComplete.bool = true;
         });
+
+
         Thread conveyorThread = new Thread(() -> {
             motorRunTillCollision(
                 "Conveyor",

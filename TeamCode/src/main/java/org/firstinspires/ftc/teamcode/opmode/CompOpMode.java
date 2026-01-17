@@ -64,15 +64,15 @@ public class CompOpMode extends OpMode{
 
         primaryCtrl = gamepadEx1;
         secondaryCtrl = gamepadEx2;
-
-        conveyor.setTargetPosition(-12);
-        conveyor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     @Override
     public void start() {
         conveyor.setTargetPosition(-12);
         conveyor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        cocker.setTargetPosition(0);
+        cocker.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
 
@@ -81,6 +81,8 @@ public class CompOpMode extends OpMode{
     final ButtonOnPress wallXPress = new ButtonOnPress(X);
     final ButtonOnPress conveyorYPress = new ButtonOnPress(Y);
     final ButtonOnPress conveyorBPress = new ButtonOnPress(B);
+    final ButtonOnPress cockerAPress = new ButtonOnPress(A);
+
 
 
     // SECONDARY CONTROLLER
@@ -194,6 +196,10 @@ public class CompOpMode extends OpMode{
         telemetryPipeline.addDataPoint("y held", primaryCtrl.getButton(Y));
         telemetryPipeline.addDataPoint("b held", primaryCtrl.getButton(B));
 
+        if (cockerAPress.check(primaryCtrl)) {
+            cocker.setTargetPosition(cocker.getTargetPosition()+HardwareConstants.COCKER_360);
+        }
+
         if (primaryCtrl.getButton(Y)) {
             conveyor.setTargetPosition(HardwareConstants.CONVEYOR_TOP_POSITION);
             conveyor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -206,7 +212,7 @@ public class CompOpMode extends OpMode{
             conveyor.setPower(
                 (
                         Misc.cast(secondaryCtrl.getButton(DPAD_DOWN)) - Misc.cast(secondaryCtrl.getButton(DPAD_UP))
-                )*0.3
+                )*0.24
             );
         } else {
             conveyor.setTargetPosition(-12);
@@ -216,8 +222,10 @@ public class CompOpMode extends OpMode{
 //        telemetryPipeline.addDataPoint("MODE", "target");
         telemetryPipeline.addDataPoint("tolerance", conveyor.getTargetPositionTolerance());
         telemetryPipeline.addDataPoint("tolerance", conveyor.getTargetPositionTolerance());
-        telemetryPipeline.addDataPoint("conveyor pos", cocker.getCurrentPosition());
+        telemetryPipeline.addDataPoint("conveyor pos", conveyor.getCurrentPosition());
         telemetryPipeline.addDataPoint("conveyor target", conveyor.getTargetPosition());
+        telemetryPipeline.addDataPoint("cocker pos", cocker.getCurrentPosition());
+        telemetryPipeline.addDataPoint("cocker target", cocker.getTargetPosition());
 //        telemetryPipeline.addDataPoint("tolerance", conveyor.getTargetPositionTolerance());
 
 //        if (posXPress.check(secondaryCtrl)) {
