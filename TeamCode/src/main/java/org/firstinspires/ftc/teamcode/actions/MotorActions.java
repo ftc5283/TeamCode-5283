@@ -114,15 +114,15 @@ public class MotorActions {
             damping = getDamping();
             if(pos > targetPosition + tolerance) {
                 if(pos < targetPosition + damping)
-                    motor.setPower((double) (targetPosition - pos) / damping);
+                    motor.setPower(powerMultiplier * ((double) (targetPosition - pos) / damping));
                 else
-                    motor.setPower(-1);
+                    motor.setPower(-powerMultiplier);
                 return true;
             } else if(pos + tolerance < targetPosition) {
                 if(pos + damping > targetPosition)
-                    motor.setPower((double) (targetPosition - pos) / damping);
+                    motor.setPower(powerMultiplier * ((double) (targetPosition - pos) / damping));
                 else
-                    motor.setPower(1);
+                    motor.setPower(powerMultiplier);
                 return true;
             } else {
                 motor.setPower(0);
@@ -134,13 +134,16 @@ public class MotorActions {
             return motor.getPower();
         }
 
+        public boolean within(){
+            return within(tolerance);
+        }
+
         public boolean within(int tolerance){
             int pos = motor.getCurrentPosition();
             int targetPosition = getTarget();
             if(pos > targetPosition + tolerance || pos + tolerance < targetPosition) {
                 return false;
             } else {
-                motor.setPower(0);
                 return true;
             }
         }

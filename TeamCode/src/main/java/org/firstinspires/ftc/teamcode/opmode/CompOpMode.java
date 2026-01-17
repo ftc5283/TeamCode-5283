@@ -59,7 +59,7 @@ public class CompOpMode extends OpMode{
 
         conveyor = hardwareMap.get(DcMotorEx.class, "conveyor");
         conveyorMove = new MotorActions(conveyor, telemetryPipeline).moveMotor(0);
-        conveyorMove.powerMultiplier = 0.025;
+        conveyorMove.powerMultiplier = 0.1;
 
         wall = hardwareMap.get(ServoImplEx.class, "wall");
         wall.setDirection(Servo.Direction.REVERSE);
@@ -120,6 +120,7 @@ public class CompOpMode extends OpMode{
 
     boolean isCocked = false;
     boolean justFired = false;
+    long conveyorTimer = 0;
 
     @Override
     public void loop() {
@@ -193,9 +194,9 @@ public class CompOpMode extends OpMode{
         }
         cockerMove.run();
 
-//        if (this.justFired && ) {
-//
-//        }
+        if (conveyorYPress.check(primaryCtrl) ||  (justFired && conveyorMove.within())) {
+            conveyorTimer = System.currentTimeMillis();
+        }
         if (conveyorYPress.checkWithin(primaryCtrl, 1000)) {
             conveyorMove.targetPos = HardwareConstants.CONVEYOR_TOP_POSITION;
             telemetryPipeline.addDataPoint("Conveyor goal", conveyorMove.targetPos);
