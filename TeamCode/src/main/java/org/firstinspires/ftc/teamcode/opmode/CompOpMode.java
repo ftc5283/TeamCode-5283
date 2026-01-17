@@ -198,7 +198,7 @@ public class CompOpMode extends OpMode{
         }
         conveyorMove.run();
 
-        if (wallXPress.check(primaryCtrl) || justLifted) {
+        if (wallXPress.check(primaryCtrl) || (justLifted && conveyorMove.within())) {
             justLifted = false;
             wallTimer = System.currentTimeMillis();
         }
