@@ -7,4 +7,5 @@ public class HardwareConstants {
     public static int COCKER_TEETH_LENGTH = 3800-2500;
     public static final double COCKER_WEAK_POWER = 0.05;
     public static final double CONVEYOR_WEAK_POWER = 0.05;
+    public static final boolean INVERT_RIGHT_SIDE = true;
 }

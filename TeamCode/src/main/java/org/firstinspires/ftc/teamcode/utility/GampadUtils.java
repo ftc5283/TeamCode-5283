@@ -53,7 +53,7 @@ public class GampadUtils {
             speeds[0] = cast(ctrl.getButton(DPAD_UP)) - cast(ctrl.getButton(DPAD_DOWN));
             speeds[1] = cast(ctrl.getButton(DPAD_RIGHT)) - cast(ctrl.getButton(DPAD_LEFT));
         } else {
-            speeds[0] = -ctrl.getLeftY();
+            speeds[0] = ctrl.getLeftY();
             speeds[1] = ctrl.getLeftX();
         }
         return speeds;

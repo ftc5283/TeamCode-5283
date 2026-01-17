@@ -5,7 +5,7 @@ import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import static org.firstinspires.ftc.teamcode.pipeline.WheelDirection.*;
+import org.firstinspires.ftc.teamcode.utility.HardwareConstants;
 
 public class HardwarePipeline extends MecanumDrive {
     private final MotorGroup dcDrive;
@@ -19,8 +19,7 @@ public class HardwarePipeline extends MecanumDrive {
         );
     }
     public HardwarePipeline(Motor dcFl, Motor dcFr, Motor dcBl, Motor dcBr) {
-        //noinspection ConstantValue
-        super(INVERT_LEFT_SIDE ^ INVERT_RIGHT_SIDE, dcFl, dcFr, dcBl, dcBr);
+        super(HardwareConstants.INVERT_RIGHT_SIDE,dcFl, dcFr, dcBl, dcBr);
         dcFr.setInverted(!dcFr.getInverted());
         dcDrive = new MotorGroup(dcFl, dcFr, dcBl, dcBr);
         setPowerBehavior();
