@@ -44,11 +44,15 @@ public class HardwarePipeline extends MecanumDrive {
 
     @Override
     public void driveRobotCentric(double strafeSpeed, double forwardSpeed, double turnSpeed) {
-        if(INVERT_LEFT_SIDE) {
-            super.driveRobotCentric(-strafeSpeed, -forwardSpeed, -turnSpeed);
-        } else {
-            super.driveRobotCentric(strafeSpeed, forwardSpeed, turnSpeed);
-        }
+        this.driveRobotCentric(strafeSpeed, forwardSpeed, turnSpeed, false);
     }
 
+    @Override
+    public void driveRobotCentric(double strafeSpeed, double forwardSpeed, double turnSpeed, boolean squareInputs) {
+        if(INVERT_LEFT_SIDE) {
+            super.driveRobotCentric(-strafeSpeed, -forwardSpeed, -turnSpeed, squareInputs);
+        } else {
+            super.driveRobotCentric(strafeSpeed, forwardSpeed, turnSpeed,squareInputs);
+        }
+    }
 }

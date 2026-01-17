@@ -49,6 +49,9 @@ public class CompOpMode extends OpMode{
         cocker = hardwareMap.get(DcMotorEx.class, "cocker");
         cocker.setPower(0.05);
         conveyor = hardwareMap.get(DcMotorEx.class, "conveyor");
+        conveyor.setTargetPosition(0);
+        conveyor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
         wall = hardwareMap.get(ServoImplEx.class, "wall");
 
         telemetryPipeline.addDataPointPerpetual("init position", cocker.getCurrentPosition());
@@ -104,7 +107,7 @@ public class CompOpMode extends OpMode{
     final double throttleForwardBack = squareInputsCorrection.map(0.5);
     final double throttleTurn = squareInputsCorrection.map(0.5);
 
-    int conveyorPosDelta = 1;
+    int conveyorPosDelta = 128;
 //    double conveyorPowerDelta = 0.25;
 //
 //    int mode = -1;
@@ -146,11 +149,7 @@ public class CompOpMode extends OpMode{
             wall.setPosition(0);
         }
         telemetryPipeline.addDataPoint("wall pos", wall.getPosition());
-        telemetryPipeline.addDataPoint("wall connect info", wall.getConnectionInfo());
         telemetryPipeline.addDataPoint("wall pos", wall.getDirection());
-        telemetryPipeline.addDataPoint("wall pwm", wall.isPwmEnabled());
-        telemetryPipeline.addDataPoint("wall pwm", wall.getPwmRange());
-        telemetryPipeline.addDataPoint("wall ctrl", wall.getController());
 
         final double turnSpeed = gamepad1.right_trigger - gamepad1.left_trigger;
 //        final double forwardSpeed = gamepadEx1.getLeftY();
@@ -169,9 +168,9 @@ public class CompOpMode extends OpMode{
 
         supervisor.run(telemetryPipeline);
 
-//        telemetryPipeline.addDataPoint("forward Speed", forwardSpeed);
-//        telemetryPipeline.addDataPoint("turn Speed", turnSpeed);
-//        telemetryPipeline.addDataPoint("strafe Speed", strafeSpeed);
+        telemetryPipeline.addDataPoint("forward Speed", forwardSpeed);
+        telemetryPipeline.addDataPoint("turn Speed", turnSpeed);
+        telemetryPipeline.addDataPoint("strafe Speed", strafeSpeed);
 
         telemetryPipeline.addDataPoint("current cocker pos", cocker.getCurrentPosition());
         telemetryPipeline.addDataPoint("cocker current (mA)", cocker.getCurrent(CurrentUnit.MILLIAMPS));
@@ -182,7 +181,7 @@ public class CompOpMode extends OpMode{
 
         if (doubleDeltaOnPress.check(secondaryCtrl)) {
             conveyorPosDelta *= 2;
-        } else if (halveDeltaOnPress.check(secondaryCtrl)) {
+        } else if (halveDeltaOnPress.check(secondaryCtrl) && conveyorPosDelta/2 != 0) {
             conveyorPosDelta /= 2;
         }
         if (incrementOnPress.check(secondaryCtrl)) {
@@ -198,7 +197,7 @@ public class CompOpMode extends OpMode{
         telemetryPipeline.addDataPoint("real conveyor target", conveyor.getTargetPosition());
         telemetryPipeline.addDataPoint("intended conveyor target", HardwareConstants.CONVEYOR_POS);
         telemetryPipeline.addDataPoint("conveyor target delta", conveyorPosDelta);
-        telemetryPipeline.addDataPoint("tolerance", conveyor.getTargetPositionTolerance());
+//        telemetryPipeline.addDataPoint("tolerance", conveyor.getTargetPositionTolerance());
 
 //        if (posXPress.check(secondaryCtrl)) {
 //            mode = 0;
