@@ -109,7 +109,7 @@ public class CompOpMode extends OpMode{
 //    double cockerPowerDelta = 0.25;
 //
 //    int mode = -1;
-
+    double servoPos = 0.3;
     @Override
     public void loop() {
         if (gamepad1.back) {
@@ -138,10 +138,9 @@ public class CompOpMode extends OpMode{
             telemetryPipeline.refresh();
             return;
         }
-
-        if (wallXPress.checkWithin(primaryCtrl, 2500)) {
+        if (wallXPress.checkWithin(primaryCtrl, 1000)) {
             telemetryPipeline.addDataPoint("wall", "should be 90 deg");
-            wall.setPosition(90.0/300);
+            wall.setPosition(90.0/300.0);
         } else {
             telemetryPipeline.addDataPoint("wall", "should be 0 deg");
             wall.setPosition(0);
