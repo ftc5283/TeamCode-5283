@@ -24,7 +24,7 @@ public class ResetMotorsPos extends LinearOpMode {
     VoltageSensor controlHub;
 
     int cockerInitPos;
-    int conveyorInit;
+    int conveyorInitPos;
 
     SimpleAtomicBool cockerComplete = new SimpleAtomicBool();
     SimpleAtomicBool conveyorComplete = new SimpleAtomicBool();
@@ -73,6 +73,8 @@ public class ResetMotorsPos extends LinearOpMode {
             telemetry.addDataPointPerpetual(oldReading, old);
             telemetry.addDataPointPerpetual(reading, readings[i]);
         } while (!withinTolerance(old, readings[i], posTolerance));
+        telemetry.removeDataPoint(reading);
+        telemetry.removeDataPoint(oldReading);
     }
 
     @SuppressWarnings("RedundantThrows")
@@ -88,8 +90,8 @@ public class ResetMotorsPos extends LinearOpMode {
 
         conveyor = hardwareMap.get(DcMotorEx.class, "conveyor");
         conveyor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        conveyorInit = conveyor.getCurrentPosition();
-        telemetryPipeline.addDataPointPerpetual("Conveyor init pos", conveyorInit);
+        conveyorInitPos = conveyor.getCurrentPosition();
+        telemetryPipeline.addDataPointPerpetual("Conveyor init pos", conveyorInitPos);
 
         controlHub = hardwareMap.voltageSensor.get("Control Hub");
 
@@ -171,6 +173,8 @@ public class ResetMotorsPos extends LinearOpMode {
 
         telemetryPipeline.addDataPoint("last cocker pos before reset", cocker.getCurrentPosition());
         telemetryPipeline.addDataPoint("last conveyor pos before rest", conveyor.getCurrentPosition());
+        telemetryPipeline.addDataPoint("init cocker pos", cockerInitPos);
+        telemetryPipeline.addDataPoint("init conveyor pos", conveyorInitPos);
 
         cocker.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         conveyor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
