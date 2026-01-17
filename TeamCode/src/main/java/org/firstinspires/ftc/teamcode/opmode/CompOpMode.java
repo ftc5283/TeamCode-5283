@@ -181,8 +181,8 @@ public class CompOpMode extends OpMode{
                     HardwareConstants.COCKER_POS -= cockerPosDelta;
                 }
 
-                cocker.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 cocker.setTargetPosition(HardwareConstants.COCKER_POS);
+                cocker.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
                 telemetryPipeline.addDataPoint("MODE", "target");
                 telemetryPipeline.addDataPoint("real cocker target", cocker.getTargetPosition());
