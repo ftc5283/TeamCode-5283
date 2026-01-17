@@ -8,4 +8,5 @@ public class HardwareConstants {
     public static final double COCKER_WEAK_POWER = 0.05;
     public static final double CONVEYOR_WEAK_POWER = 0.05;
     public static final boolean INVERT_RIGHT_SIDE = true;
+    public static final double WALL_POS = 90.0/300.0;
 }
