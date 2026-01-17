@@ -59,7 +59,7 @@ public class CompOpMode extends OpMode{
 
         conveyor = hardwareMap.get(DcMotorEx.class, "conveyor");
         conveyorMove = new MotorActions(conveyor, telemetryPipeline).moveMotor(0);
-        conveyorMove.powerMultiplier = 0.05;
+        conveyorMove.powerMultiplier = 0.025;
 
         wall = hardwareMap.get(ServoImplEx.class, "wall");
         wall.setDirection(Servo.Direction.REVERSE);
@@ -119,6 +119,7 @@ public class CompOpMode extends OpMode{
     final double throttleTurn = squareInputsCorrection.map(0.55);
 
     boolean isCocked = false;
+    boolean justFired = false;
 
     @Override
     public void loop() {
@@ -184,6 +185,7 @@ public class CompOpMode extends OpMode{
         if (cockerAPress.check(primaryCtrl)) {
             if (isCocked) {
                 cockerMove.targetPos += 3*HardwareConstants.COCKER_360/4;
+                this.justFired = true;
             } else {
                 cockerMove.targetPos += HardwareConstants.COCKER_360/4;
             }
@@ -191,11 +193,14 @@ public class CompOpMode extends OpMode{
         }
         cockerMove.run();
 
+//        if (this.justFired && ) {
+//
+//        }
         if (conveyorYPress.checkWithin(primaryCtrl, 1000)) {
             conveyorMove.targetPos = HardwareConstants.CONVEYOR_TOP_POSITION;
             telemetryPipeline.addDataPoint("Conveyor goal", conveyorMove.targetPos);
         } else {
-            conveyorMove.targetPos = 30*Misc.sgn(HardwareConstants.CONVEYOR_TOP_POSITION);
+            conveyorMove.targetPos = 70*Misc.sgn(HardwareConstants.CONVEYOR_TOP_POSITION);
             telemetryPipeline.addDataPoint("Conveyor goal", conveyorMove.targetPos);
         }
         conveyorMove.run();
