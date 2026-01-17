@@ -203,7 +203,11 @@ public class CompOpMode extends OpMode{
             conveyor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             telemetryPipeline.addDataPoint("Conveyor goal", -HardwareConstants.CONVEYOR_TOP_POSITION);
         } else if (secondaryCtrl.getButton(DPAD_UP) || secondaryCtrl.getButton(DPAD_DOWN)){
-            conveyor.setPower(Misc.cast(secondaryCtrl.getButton(DPAD_DOWN)) - Misc.cast(secondaryCtrl.getButton(DPAD_UP)));
+            conveyor.setPower(
+                (
+                        Misc.cast(secondaryCtrl.getButton(DPAD_DOWN)) - Misc.cast(secondaryCtrl.getButton(DPAD_UP))
+                )*0.3
+            );
         } else {
             conveyor.setTargetPosition(-12);
             conveyor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
