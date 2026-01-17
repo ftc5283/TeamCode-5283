@@ -65,7 +65,7 @@ public class ResetMotorsPos extends LinearOpMode {
             telemetry.addDataPointPerpetual(reading, readings[i]);
             telemetry.addDataPointPerpetual(oldReading, readings[i]);
             i = (i+1)%measurements;
-        } while (withinTolerance(old, readings[i], posTolerance));
+        } while (!withinTolerance(old, readings[i], posTolerance));
 
         telemetry.removeDataPoint(reading);
     }
@@ -120,7 +120,7 @@ public class ResetMotorsPos extends LinearOpMode {
                         cocker,
                         HardwareConstants.COCKER_WEAK_POWER,
                         telemetryPipeline,
-                        25,
+                        15,
                         5,
                         100
                 );
@@ -135,8 +135,8 @@ public class ResetMotorsPos extends LinearOpMode {
                     conveyor,
                     HardwareConstants.CONVEYOR_WEAK_POWER,
                     telemetryPipeline,
-                    25,
-                    4,
+                    15,
+                    5,
                     100
             );
             conveyorComplete.bool = true;
