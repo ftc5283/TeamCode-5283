@@ -109,19 +109,16 @@ public class TelemetryPipeline{
      * @see TelemetryPipeline#addDataPoint(String, Object)
      */
     public boolean addDataPointPerpetual(@NonNull String key, @NonNull String value) {
-        int i = 0;
         key = key.intern();
-        for(; i<keys.size(); i++)
-            if(keys.get(i) == key)
-                break;
-        if(i == keys.size()) {
-            keys.add(key);
-            data.add(value);
-            return true;
-        } else {
-            data.set(i, value);
-            return false;
+        for(int i = 0; i<keys.size(); i++){
+            if(keys.get(i) == key) {
+                data.set(i, value);
+                return false;
+            }
         }
+        keys.add(key);
+        data.add(value);
+        return true;
     }
 
     /**
@@ -171,19 +168,16 @@ public class TelemetryPipeline{
      * @see TelemetryPipeline#removeHeader(String)
      */
     public boolean addHeaderPerpetual(@NonNull String header) {
-        int i = 0;
         header = header.intern();
-        for(; i<keys.size(); i++)
-            if(keys.get(i) == header)
-                break;
-        if(i == keys.size()) {
-            keys.add(header);
-            data.add(null);
-            return true;
-        } else {
-            data.set(i, null);
-            return false;
+        for(int i = 0; i<keys.size(); i++){
+            if(keys.get(i) == header) {
+                data.set(i, null);
+                return false;
+            }
         }
+        keys.add(header);
+        data.add(null);
+        return true;
     }
 
     /**
