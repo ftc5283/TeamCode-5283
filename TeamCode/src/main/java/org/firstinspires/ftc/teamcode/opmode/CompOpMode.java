@@ -57,6 +57,7 @@ public class CompOpMode extends OpMode{
 //        cocker.setPower(0.05);
 //        cockerActions = new MotorActions(cocker, telemetryPipeline);
         cockerMove = new MotorActions(cocker, telemetryPipeline).moveMotor(0);
+        cockerMove.powerMultiplier = 0.25;
 
         conveyor = hardwareMap.get(DcMotorEx.class, "conveyor");
         conveyorMove = new MotorActions(conveyor, telemetryPipeline).moveMotor(0);
@@ -75,6 +76,8 @@ public class CompOpMode extends OpMode{
 
         conveyor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         cocker.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
     }
 
 //    @Override
@@ -118,10 +121,7 @@ public class CompOpMode extends OpMode{
     final double throttleForwardBack = squareInputsCorrection.map(0.5);
     final double throttleTurn = squareInputsCorrection.map(0.55);
 
-//    int cockerPosDelta = 128;
-//    double cockerPowerDelta = 0.25;
-//
-//    int mode = -1;
+
     @Override
     public void loop() {
         if (gamepad1.back) {
@@ -131,6 +131,7 @@ public class CompOpMode extends OpMode{
             primaryCtrl = gamepadEx2;
             secondaryCtrl = gamepadEx1;
         }
+
         // Don't get rid of this. Very useful for figuring out if the issue is the configuration or
         // if one of the bevel gears is on backwards.
         if (testRightStickToggle.check(secondaryCtrl)) {
@@ -158,15 +159,9 @@ public class CompOpMode extends OpMode{
         }
 
         telemetryPipeline.addDataPoint("wall pos", wall.getPosition());
-//        telemetryPipeline.addDataPoint("wall connect info", wall.getConnectionInfo());
         telemetryPipeline.addDataPoint("wall pos", wall.getDirection());
-//        telemetryPipeline.addDataPoint("wall pwm", wall.isPwmEnabled());
-//        telemetryPipeline.addDataPoint("wall pwm", wall.getPwmRange());
-//        telemetryPipeline.addDataPoint("wall ctrl", wall.getController());
 
         final double turnSpeed = gamepad1.right_trigger - gamepad1.left_trigger;
-//        final double forwardSpeed = gamepadEx1.getLeftY();
-//        final double strafeSpeed = gamepadEx1.getLeftX();
         final double[] speeds = GampadUtils.speedInputs(primaryCtrl);
         final double forwardSpeed = speeds[0];
         final double strafeSpeed = speeds[1];
@@ -185,21 +180,6 @@ public class CompOpMode extends OpMode{
         telemetryPipeline.addDataPoint("turn Speed", turnSpeed);
         telemetryPipeline.addDataPoint("strafe Speed", strafeSpeed);
 
-//        telemetryPipeline.addDataPoint("current cocker pos", cocker.getCurrentPosition());
-//        telemetryPipeline.addDataPoint("cocker current (mA)", cocker.getCurrent(CurrentUnit.MILLIAMPS));
-//        telemetryPipeline.addDataPoint("max safe current (mA)", cocker.getCurrentAlert(CurrentUnit.MILLIAMPS));
-//        telemetryPipeline.addDataPoint("real cocker power", cocker.getPower());
-
-//        if (conveyorYPress.checkWithin(primaryCtrl, 3000)) {
-//            conveyor.setTargetPosition(HardwareConstants.CONVEYOR_TOP_POSITION);
-//            telemetryPipeline.addDataPoint("Conveyor goal", HardwareConstants.CONVEYOR_TOP_POSITION);
-//        } else if (conveyorBPress.checkWithin(primaryCtrl, 3000)) {
-//            conveyor.setTargetPosition(-HardwareConstants.CONVEYOR_TOP_POSITION);
-//            telemetryPipeline.addDataPoint("Conveyor goal", -HardwareConstants.CONVEYOR_TOP_POSITION);
-//        } else {
-//            conveyor.setTargetPosition(-12);
-//            telemetryPipeline.addDataPoint("Conveyor goal", -12);
-//        }
         telemetryPipeline.addDataPoint("y held", primaryCtrl.getButton(Y));
         telemetryPipeline.addDataPoint("b held", primaryCtrl.getButton(B));
 
@@ -209,106 +189,22 @@ public class CompOpMode extends OpMode{
         cockerMove.run();
 
 
-        if (primaryCtrl.getButton(Y)) {
+        if (conveyorYPress.checkWithin(primaryCtrl, 3000)) {
             conveyorMove.targetPos = HardwareConstants.CONVEYOR_TOP_POSITION;
             telemetryPipeline.addDataPoint("Conveyor goal", HardwareConstants.CONVEYOR_TOP_POSITION);
-        } else if (primaryCtrl.getButton(B)) {
+        } else if (conveyorBPress.checkWithin(primaryCtrl, 3000)) {
             conveyorMove.targetPos = -HardwareConstants.CONVEYOR_TOP_POSITION;
             telemetryPipeline.addDataPoint("Conveyor goal", -HardwareConstants.CONVEYOR_TOP_POSITION);
-        } else if (secondaryCtrl.getButton(DPAD_UP) || secondaryCtrl.getButton(DPAD_DOWN)){
-            conveyor.setPower(
-                (
-                        Misc.cast(secondaryCtrl.getButton(DPAD_DOWN)) - Misc.cast(secondaryCtrl.getButton(DPAD_UP))
-                )*0.24
-            );
         } else {
             conveyorMove.targetPos = -12;
             telemetryPipeline.addDataPoint("Conveyor goal", -12);
         }
         conveyorMove.run();
 
-//        telemetryPipeline.addDataPoint("MODE", "target");
         telemetryPipeline.addDataPoint("conveyor pos", conveyor.getCurrentPosition());
         telemetryPipeline.addDataPoint("conveyor target", conveyorMove.getTarget());
         telemetryPipeline.addDataPoint("cocker pos", cocker.getCurrentPosition());
         telemetryPipeline.addDataPoint("cocker target", cockerMove.getTarget());
-//        telemetryPipeline.addDataPoint("tolerance", conveyor.getTargetPositionTolerance());
-
-//        if (posXPress.check(secondaryCtrl)) {
-//            mode = 0;
-//        } else if (precisePowerBPress.check(secondaryCtrl)) {
-//            mode = 1;
-//        } else if (stickPowerAPress.check(secondaryCtrl)) {
-//            mode = 2;
-//        }
-//        switch (mode) {
-//            case 0:
-//                if (doubleDeltaOnPress.check(secondaryCtrl)) {
-//                    cockerPosDelta *= 2;
-//                } else if (halveDeltaOnPress.check(secondaryCtrl)) {
-//                    cockerPosDelta /= 2;
-//                }
-//                if (incrementOnPress.check(secondaryCtrl)) {
-//                    HardwareConstants.CONVEYOR_POS += cockerPosDelta;
-//                } else if (decrementOnPress.check(secondaryCtrl)) {
-//                    HardwareConstants.CONVEYOR_POS -= cockerPosDelta;
-//                }
-//
-//                cocker.setTargetPosition(HardwareConstants.CONVEYOR_POS);
-//                cocker.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//
-//                telemetryPipeline.addDataPoint("MODE", "target");
-//                telemetryPipeline.addDataPoint("real cocker target", cocker.getTargetPosition());
-//                telemetryPipeline.addDataPoint("intended cocker target", HardwareConstants.CONVEYOR_POS);
-//                telemetryPipeline.addDataPoint("cocker target delta", cockerPosDelta);
-//                telemetryPipeline.addDataPoint("tolerance", cocker.getTargetPositionTolerance());
-//                break;
-//            case 1:
-//                cocker.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//                cocker.setPower(HardwareConstants.CONVEYOR_POWER);
-//
-//                if (doubleDeltaOnPress.check(secondaryCtrl)) {
-//                    conveyorPowerDelta *= 2;
-//                } else if (halveDeltaOnPress.check(secondaryCtrl)) {
-//                    conveyorPowerDelta /= 2;
-//                }
-//
-//                if (incrementOnPress.check(primaryCtrl)) {
-//                    HardwareConstants.CONVEYOR_POWER += conveyorPowerDelta;
-//                } else if (decrementOnPress.check(primaryCtrl)) {
-//                    HardwareConstants.CONVEYOR_POWER -= conveyorPowerDelta;
-//                }
-//
-//                telemetryPipeline.addDataPoint("MODE", "precise power");
-//                telemetryPipeline.addDataPoint("cocker power delta", conveyorPowerDelta);
-//                telemetryPipeline.addDataPoint("intended cocker power", HardwareConstants.CONVEYOR_POWER);
-//                break;
-//            case 2:
-//                cocker.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//                double power = secondaryCtrl.getLeftX();
-//                power *= Math.abs(power);
-//                cocker.setPower(power);
-//
-//                if (doubleDeltaOnPress.check(secondaryCtrl)) {
-//                    cockerPosDelta *= 2;
-//                } else if (halveDeltaOnPress.check(secondaryCtrl)) {
-//                    cockerPosDelta /= 2;
-//                }
-//
-//                if (incrementOnPress.check(primaryCtrl)) {
-//                    HardwareConstants.CONVEYOR_POS += cockerPosDelta;
-//                } else if (decrementOnPress.check(primaryCtrl)) {
-//                    HardwareConstants.CONVEYOR_POS -= cockerPosDelta;
-//                }
-//
-//                telemetryPipeline.addDataPoint("MODE", "stick power");
-//                telemetryPipeline.addDataPoint("input cocker power", power);
-//                break;
-//            case -1:
-//                telemetryPipeline.addDataPoint("MODE", "mode not set");
-//                telemetryPipeline.addHeader("A, B & Y on player 2 set the mode");
-//                telemetryPipeline.addDataPoint("MODE", "mode not set");
-//        }
 
         telemetryPipeline.refresh();
     }
