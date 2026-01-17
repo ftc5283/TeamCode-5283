@@ -186,7 +186,7 @@ public class CompOpMode extends OpMode{
 
         if (doubleDeltaOnPress.check(secondaryCtrl)) {
             conveyorPosDelta *= 2;
-        } else if (halveDeltaOnPress.check(secondaryCtrl)) {
+        } else if (halveDeltaOnPress.check(secondaryCtrl) && conveyorPosDelta/2 != 0) {
             conveyorPosDelta /= 2;
         }
         if (incrementOnPress.check(secondaryCtrl)) {
@@ -202,7 +202,7 @@ public class CompOpMode extends OpMode{
         telemetryPipeline.addDataPoint("real conveyor target", conveyor.getTargetPosition());
         telemetryPipeline.addDataPoint("intended conveyor target", HardwareConstants.CONVEYOR_POS);
         telemetryPipeline.addDataPoint("conveyor target delta", conveyorPosDelta);
-        telemetryPipeline.addDataPoint("tolerance", conveyor.getTargetPositionTolerance());
+//        telemetryPipeline.addDataPoint("tolerance", conveyor.getTargetPositionTolerance());
 
 //        if (posXPress.check(secondaryCtrl)) {
 //            mode = 0;
