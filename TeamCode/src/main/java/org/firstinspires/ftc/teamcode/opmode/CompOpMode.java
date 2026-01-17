@@ -186,7 +186,6 @@ public class CompOpMode extends OpMode{
 //        } else if (conveyorBPress.checkWithin(primaryCtrl, 3000)) {
 //            conveyor.setTargetPosition(-HardwareConstants.CONVEYOR_TOP_POSITION);
 //            telemetryPipeline.addDataPoint("Conveyor goal", -HardwareConstants.CONVEYOR_TOP_POSITION);
-//            throw new RuntimeException("wut");
 //        } else {
 //            conveyor.setTargetPosition(-12);
 //            telemetryPipeline.addDataPoint("Conveyor goal", -12);
@@ -196,12 +195,15 @@ public class CompOpMode extends OpMode{
 
         if (primaryCtrl.getButton(Y)) {
             conveyor.setTargetPosition(HardwareConstants.CONVEYOR_TOP_POSITION);
+            conveyor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             telemetryPipeline.addDataPoint("Conveyor goal", HardwareConstants.CONVEYOR_TOP_POSITION);
         } else if (primaryCtrl.getButton(B)) {
             conveyor.setTargetPosition(-HardwareConstants.CONVEYOR_TOP_POSITION);
+            conveyor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             telemetryPipeline.addDataPoint("Conveyor goal", -HardwareConstants.CONVEYOR_TOP_POSITION);
         } else {
             conveyor.setTargetPosition(-12);
+            conveyor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             telemetryPipeline.addDataPoint("Conveyor goal", -12);
         }
 //        telemetryPipeline.addDataPoint("MODE", "target");
