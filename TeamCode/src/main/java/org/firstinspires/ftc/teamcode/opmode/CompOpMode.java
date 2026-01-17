@@ -55,7 +55,10 @@ public class CompOpMode extends OpMode{
         cocker = hardwareMap.get(DcMotorEx.class, "cocker");
 //        cocker.setPower(0.05);
 //        cockerActions = new MotorActions(cocker, telemetryPipeline);
-        cockerMove = new MotorActions(cocker, telemetryPipeline).moveMotor(HardwareConstants.COCKER_360/4);
+        cockerMove = new MotorActions(cocker, telemetryPipeline)
+            .moveMotor(
+                cocker.getCurrentPosition()+HardwareConstants.COCKER_360/4
+            );
 
         conveyor = hardwareMap.get(DcMotorEx.class, "conveyor");
         conveyorMove = new MotorActions(conveyor, telemetryPipeline).moveMotor(0);
