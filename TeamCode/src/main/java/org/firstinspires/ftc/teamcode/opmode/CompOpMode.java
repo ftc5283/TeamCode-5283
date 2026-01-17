@@ -38,7 +38,6 @@ public class CompOpMode extends OpMode{
     VoltageSensor controlHub;
 
     MoveMotor cockerMove, conveyorMove;
-//    MotorActions cockerActions;
 
     @Override
     public void init() {

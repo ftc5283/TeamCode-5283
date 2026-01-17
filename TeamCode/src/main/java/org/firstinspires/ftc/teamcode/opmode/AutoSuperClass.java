@@ -42,61 +42,61 @@ public abstract class AutoSuperClass extends LinearOpMode {
     public void initialize(boolean startParallelTelemetry) {
         telemetryPipeline = new TelemetryPipeline(telemetry);
         drive = new HardwarePipeline(hardwareMap);
-
-        cocker = hardwareMap.get(DcMotorEx.class, "cocker");
-        cockerMove = new MotorActions(cocker, telemetryPipeline).moveMotor(
-    (cocker.getCurrentPosition()/HardwareConstants.COCKER_360)*HardwareConstants.COCKER_360 +
-            HardwareConstants.COCKER_360/6
-        );
-
-        conveyor = hardwareMap.get(DcMotorEx.class, "conveyor");
-        conveyorMove = new MotorActions(conveyor, telemetryPipeline).moveMotor(0);
-        conveyorMove.powerMultiplier = 0.25;
+//
+//        cocker = hardwareMap.get(DcMotorEx.class, "cocker");
+//        cockerMove = new MotorActions(cocker, telemetryPipeline).moveMotor(
+//            (cocker.getCurrentPosition()/HardwareConstants.COCKER_360)*HardwareConstants.COCKER_360 +
+//            HardwareConstants.COCKER_360/6
+//        );
+//
+//        conveyor = hardwareMap.get(DcMotorEx.class, "conveyor");
+//        conveyorMove = new MotorActions(conveyor, telemetryPipeline).moveMotor(0);
+//        conveyorMove.powerMultiplier = 0.25;
 
         if (startParallelTelemetry) {
             this.startParallelTelemetry();
         }
 
-        final AutoSuperClass op = this;
-        Thread loadAndLaunch = new Thread(() -> {
-            if (op.shoot) {
-                op.cockerMove.targetPos += HardwareConstants.COCKER_360;
-                op.justFired = true;
-                op.shoot = false;
-            }
-            op.cockerMove.run();
-
-            if ((op.justFired && op.cockerMove.within())) {
-                op.justFired = false;
-                op.conveyorTimer = System.currentTimeMillis();
-            }
-
-            if (op.conveyorTimer + 1000 >= System.currentTimeMillis()) {
-                op.conveyorMove.targetPos = HardwareConstants.CONVEYOR_TOP_POSITION;
-                op.telemetryPipeline.addDataPoint("Conveyor goal", op.conveyorMove.targetPos);
-                op.startedLifting = true;
-            } else {
-                if (op.startedLifting) {
-                    op.justLifted = true;
-                    op. startedLifting = false;
-                }
-                op.conveyorMove.targetPos = 70* Misc.sgn(HardwareConstants.CONVEYOR_TOP_POSITION);
-                op.telemetryPipeline.addDataPoint("Conveyor goal", conveyorMove.targetPos);
-            }
-            op.conveyorMove.run();
-
-            if (op.justLifted && op.conveyorMove.within()) {
-                op.justLifted = false;
-                op.wallTimer = System.currentTimeMillis();
-            }
-
-            if (wallTimer + 1000 >= System.currentTimeMillis()) {
-                op.wall.setPosition(HardwareConstants.WALL_POS);
-            } else {
-                op.wall.setPosition(0);
-            }
-        });
-        loadAndLaunch.start();
+//        final AutoSuperClass op = this;
+//        Thread loadAndLaunch = new Thread(() -> {
+//            if (op.shoot) {
+//                op.cockerMove.targetPos += HardwareConstants.COCKER_360;
+//                op.justFired = true;
+//                op.shoot = false;
+//            }
+//            op.cockerMove.run();
+//
+//            if ((op.justFired && op.cockerMove.within())) {
+//                op.justFired = false;
+//                op.conveyorTimer = System.currentTimeMillis();
+//            }
+//
+//            if (op.conveyorTimer + 1000 >= System.currentTimeMillis()) {
+//                op.conveyorMove.targetPos = HardwareConstants.CONVEYOR_TOP_POSITION;
+//                op.telemetryPipeline.addDataPoint("Conveyor goal", op.conveyorMove.targetPos);
+//                op.startedLifting = true;
+//            } else {
+//                if (op.startedLifting) {
+//                    op.justLifted = true;
+//                    op. startedLifting = false;
+//                }
+//                op.conveyorMove.targetPos = 70* Misc.sgn(HardwareConstants.CONVEYOR_TOP_POSITION);
+//                op.telemetryPipeline.addDataPoint("Conveyor goal", conveyorMove.targetPos);
+//            }
+//            op.conveyorMove.run();
+//
+//            if (op.justLifted && op.conveyorMove.within()) {
+//                op.justLifted = false;
+//                op.wallTimer = System.currentTimeMillis();
+//            }
+//
+//            if (wallTimer + 1000 >= System.currentTimeMillis()) {
+//                op.wall.setPosition(HardwareConstants.WALL_POS);
+//            } else {
+//                op.wall.setPosition(0);
+//            }
+//        });
+//        loadAndLaunch.start();
     }
 
     /// angle is the angle to the line extending out the front of the robot
