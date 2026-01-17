@@ -57,7 +57,8 @@ public class CompOpMode extends OpMode{
 //        cockerActions = new MotorActions(cocker, telemetryPipeline);
         cockerMove = new MotorActions(cocker, telemetryPipeline)
             .moveMotor(
-                cocker.getCurrentPosition()+HardwareConstants.COCKER_360/4
+                (cocker.getCurrentPosition()/HardwareConstants.COCKER_360)*HardwareConstants.COCKER_360 +
+                HardwareConstants.COCKER_360/4
             );
 
         conveyor = hardwareMap.get(DcMotorEx.class, "conveyor");
@@ -124,8 +125,8 @@ public class CompOpMode extends OpMode{
     boolean isCocked = false;
     boolean justFired = false;
     long conveyorTimer = 0;
-    boolean startedLifting = true;
-    boolean justLifted = true;
+    boolean startedLifting = false;
+    boolean justLifted = false;
     long wallTimer = 0;
 
     @Override
