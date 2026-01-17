@@ -50,11 +50,7 @@ public class CompOpMode extends OpMode{
         gamepadEx1 = new GamepadEx(gamepad1);
         gamepadEx2 = new GamepadEx(gamepad2);
 
-
-//        cocker = AutoSuperClass.getCocker(hardwareMap);
         cocker = hardwareMap.get(DcMotorEx.class, "cocker");
-//        cocker.setPower(0.05);
-//        cockerActions = new MotorActions(cocker, telemetryPipeline);
         cockerMove = new MotorActions(cocker, telemetryPipeline)
             .moveMotor(
                 (cocker.getCurrentPosition()/HardwareConstants.COCKER_360)*HardwareConstants.COCKER_360 +

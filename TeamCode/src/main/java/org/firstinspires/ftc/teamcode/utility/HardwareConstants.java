@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.utility;
 public class HardwareConstants {
     /// 2500
     /// 3800
-    public static int CONVEYOR_TOP_POSITION = -425;
+    public static int CONVEYOR_TOP_POSITION = -440;
 //    public static int COCKER_TEETH_LENGTH = 3800-2500;
 
     @SuppressWarnings("UnnecessaryUnaryMinus")

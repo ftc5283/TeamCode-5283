@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.opmode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name = "Auto Shoot1 + Move")
+@Autonomous(name = "Auto Shoot + Move")
 public class AutoShootMove extends AutoShoot {
 
     @Override
