@@ -59,7 +59,7 @@ public class CompOpMode extends OpMode{
 
         conveyor = hardwareMap.get(DcMotorEx.class, "conveyor");
         conveyorMove = new MotorActions(conveyor, telemetryPipeline).moveMotor(0);
-        conveyorMove.powerMultiplier = 0.1;
+        conveyorMove.powerMultiplier = 0.05;
 
         wall = hardwareMap.get(ServoImplEx.class, "wall");
         wall.setDirection(Servo.Direction.REVERSE);
@@ -166,10 +166,10 @@ public class CompOpMode extends OpMode{
         final boolean throttleSpeed = throttleLeftStickToggle.check(primaryCtrl);
 
         drive.driveRobotCentric(
-                -strafeSpeed * (throttleSpeed ? throttleStrafe : 1),
-                -forwardSpeed * (throttleSpeed ? throttleForwardBack : 1),
-                -turnSpeed * (throttleSpeed ? throttleTurn : 1),
-                squareInputs
+            -strafeSpeed * (throttleSpeed ? throttleStrafe : 1),
+            -forwardSpeed * (throttleSpeed ? throttleForwardBack : 1),
+            -turnSpeed * (throttleSpeed ? throttleTurn : 1),
+            squareInputs
         );
 
         supervisor.run(telemetryPipeline);
