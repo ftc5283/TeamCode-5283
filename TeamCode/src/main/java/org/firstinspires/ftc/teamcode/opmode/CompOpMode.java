@@ -106,9 +106,9 @@ public class CompOpMode extends OpMode{
     final Double2Double squareInputsCorrection = (squareInputs ? (double x) -> x : Math::sqrt);
     final double throttleStrafe = squareInputsCorrection.map(0.5);
     final double throttleForwardBack = squareInputsCorrection.map(0.5);
-    final double throttleTurn = squareInputsCorrection.map(0.5);
+    final double throttleTurn = squareInputsCorrection.map(0.55);
 
-    int conveyorPosDelta = 1;
+    int conveyorPosDelta = 128;
 //    double conveyorPowerDelta = 0.25;
 //
 //    int mode = -1;
@@ -150,11 +150,11 @@ public class CompOpMode extends OpMode{
             wall.setPosition(0);
         }
         telemetryPipeline.addDataPoint("wall pos", wall.getPosition());
-        telemetryPipeline.addDataPoint("wall connect info", wall.getConnectionInfo());
+//        telemetryPipeline.addDataPoint("wall connect info", wall.getConnectionInfo());
         telemetryPipeline.addDataPoint("wall pos", wall.getDirection());
-        telemetryPipeline.addDataPoint("wall pwm", wall.isPwmEnabled());
-        telemetryPipeline.addDataPoint("wall pwm", wall.getPwmRange());
-        telemetryPipeline.addDataPoint("wall ctrl", wall.getController());
+//        telemetryPipeline.addDataPoint("wall pwm", wall.isPwmEnabled());
+//        telemetryPipeline.addDataPoint("wall pwm", wall.getPwmRange());
+//        telemetryPipeline.addDataPoint("wall ctrl", wall.getController());
 
         final double turnSpeed = gamepad1.right_trigger - gamepad1.left_trigger;
 //        final double forwardSpeed = gamepadEx1.getLeftY();
@@ -173,9 +173,9 @@ public class CompOpMode extends OpMode{
 
         supervisor.run(telemetryPipeline);
 
-//        telemetryPipeline.addDataPoint("forward Speed", forwardSpeed);
-//        telemetryPipeline.addDataPoint("turn Speed", turnSpeed);
-//        telemetryPipeline.addDataPoint("strafe Speed", strafeSpeed);
+        telemetryPipeline.addDataPoint("forward Speed", forwardSpeed);
+        telemetryPipeline.addDataPoint("turn Speed", turnSpeed);
+        telemetryPipeline.addDataPoint("strafe Speed", strafeSpeed);
 
         telemetryPipeline.addDataPoint("current cocker pos", cocker.getCurrentPosition());
         telemetryPipeline.addDataPoint("cocker current (mA)", cocker.getCurrent(CurrentUnit.MILLIAMPS));
