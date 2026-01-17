@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.utility;
 
 public class HardwareConstants {
-    public static int COCKER_POS = 0;
-    public static double COCKER_POWER = 0;
+    /// 2500
+    /// 3800
+    public static int CONVEYOR_POS = 0;
+    public static int COCKER_TEETH_LENGTH = 3800-2500;
 }

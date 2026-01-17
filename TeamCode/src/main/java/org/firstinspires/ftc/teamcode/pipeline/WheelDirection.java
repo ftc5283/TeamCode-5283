@@ -11,13 +11,13 @@ public final class WheelDirection {
     public static final boolean FL = BACKWARD;
 
     ///Edit these whenever motors or bevel gears are changed.
-    public static final boolean FR = BACKWARD;
+    public static final boolean FR = FORWARD;
 
     ///Edit these whenever motors or bevel gears are changed.
     public static final boolean BL = BACKWARD;
 
     ///Edit these whenever motors or bevel gears are changed.
-    public static final boolean BR = BACKWARD;
+    public static final boolean BR = FORWARD;
 
     public static final boolean INVERT_RIGHT_SIDE = !(FR && BR);
 
