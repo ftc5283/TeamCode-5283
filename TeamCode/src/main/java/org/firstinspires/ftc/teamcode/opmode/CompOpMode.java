@@ -64,6 +64,8 @@ public class CompOpMode extends OpMode{
         primaryCtrl = gamepadEx1;
         secondaryCtrl = gamepadEx2;
 
+        conveyor.setTargetPosition(-12);
+        conveyor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     @Override
@@ -178,13 +180,26 @@ public class CompOpMode extends OpMode{
 //        telemetryPipeline.addDataPoint("max safe current (mA)", cocker.getCurrentAlert(CurrentUnit.MILLIAMPS));
 //        telemetryPipeline.addDataPoint("real cocker power", cocker.getPower());
 
-        if (conveyorYPress.checkWithin(primaryCtrl, 3000)) {
+//        if (conveyorYPress.checkWithin(primaryCtrl, 3000)) {
+//            conveyor.setTargetPosition(HardwareConstants.CONVEYOR_TOP_POSITION);
+//            telemetryPipeline.addDataPoint("Conveyor goal", HardwareConstants.CONVEYOR_TOP_POSITION);
+//        } else if (conveyorBPress.checkWithin(primaryCtrl, 3000)) {
+//            conveyor.setTargetPosition(-HardwareConstants.CONVEYOR_TOP_POSITION);
+//            telemetryPipeline.addDataPoint("Conveyor goal", -HardwareConstants.CONVEYOR_TOP_POSITION);
+//            throw new RuntimeException("wut");
+//        } else {
+//            conveyor.setTargetPosition(-12);
+//            telemetryPipeline.addDataPoint("Conveyor goal", -12);
+//        }
+        telemetryPipeline.addDataPoint("y held", primaryCtrl.getButton(Y));
+        telemetryPipeline.addDataPoint("b held", primaryCtrl.getButton(B));
+
+        if (primaryCtrl.getButton(Y)) {
             conveyor.setTargetPosition(HardwareConstants.CONVEYOR_TOP_POSITION);
             telemetryPipeline.addDataPoint("Conveyor goal", HardwareConstants.CONVEYOR_TOP_POSITION);
-        } else if (conveyorBPress.checkWithin(primaryCtrl, 3000)) {
+        } else if (primaryCtrl.getButton(B)) {
             conveyor.setTargetPosition(-HardwareConstants.CONVEYOR_TOP_POSITION);
             telemetryPipeline.addDataPoint("Conveyor goal", -HardwareConstants.CONVEYOR_TOP_POSITION);
-            throw new RuntimeException("wut");
         } else {
             conveyor.setTargetPosition(-12);
             telemetryPipeline.addDataPoint("Conveyor goal", -12);
