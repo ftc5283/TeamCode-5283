@@ -29,16 +29,20 @@ public class ResetMotorsPos extends LinearOpMode {
     SimpleAtomicBool cockerComplete = new SimpleAtomicBool();
     SimpleAtomicBool conveyorComplete = new SimpleAtomicBool();
 
-    final int posTolerance = 25;
+    final int timeRes = 100;
+    final int measures = 5;
+
+    final double conveyorSpeedEncodePerMillis = 30.0/500;
+    final double cockerSpeedEncodePerMillis = 35.0/500;
 
     public static void motorRunTillCollision(
-            String name,
-            DcMotorEx motor,
-            double power,
-            TelemetryPipeline telemetry,
-            int posTolerance,
-            int measurements,
-            int timeResolutionMillis
+        String name,
+        DcMotorEx motor,
+        double power,
+        TelemetryPipeline telemetry,
+        int posTolerance,
+        int measurements,
+        int timeResolutionMillis
     ) {
         motor.setPower(power);
 
@@ -98,14 +102,15 @@ public class ResetMotorsPos extends LinearOpMode {
         telemetryPipeline.refresh();
 
         Thread cockerThread = new Thread(() -> {
+            int tolerance = (int) (cockerSpeedEncodePerMillis * timeRes * measures);
             motorRunTillCollision(
-                    "Cocker",
-                    cocker,
-                    HardwareConstants.COCKER_WEAK_POWER,
-                    telemetryPipeline,
-                    25,
-                    5,
-                    100
+                "Cocker",
+                cocker,
+                HardwareConstants.COCKER_WEAK_POWER,
+                telemetryPipeline,
+                tolerance,
+                measures,
+                timeRes
             );
             if (withinTolerance(cockerInitPos,  cocker.getCurrentPosition(), 25)) {
                 cocker.setTargetPosition(cocker.getCurrentPosition() + HardwareConstants.COCKER_TEETH_LENGTH);
@@ -120,13 +125,13 @@ public class ResetMotorsPos extends LinearOpMode {
                 String lowPower = "Cocker moving into position";
                 telemetryPipeline.addHeaderPerpetual(lowPower);
                 motorRunTillCollision(
-                        "Cocker",
-                        cocker,
-                        HardwareConstants.COCKER_WEAK_POWER,
-                        telemetryPipeline,
-                        25,
-                        5,
-                        100
+                    "Cocker",
+                    cocker,
+                    HardwareConstants.COCKER_WEAK_POWER,
+                    telemetryPipeline,
+                    tolerance,
+                    measures,
+                    timeRes
                 );
 
             }
@@ -135,13 +140,13 @@ public class ResetMotorsPos extends LinearOpMode {
         });
         Thread conveyorThread = new Thread(() -> {
             motorRunTillCollision(
-                    "Conveyor",
-                    conveyor,
-                    HardwareConstants.CONVEYOR_WEAK_POWER,
-                    telemetryPipeline,
-                    25,
-                    5,
-                    100
+                "Conveyor",
+                conveyor,
+                HardwareConstants.CONVEYOR_WEAK_POWER,
+                telemetryPipeline,
+                (int) (conveyorSpeedEncodePerMillis * timeRes * measures),
+                measures,
+                timeRes
             );
             conveyorComplete.bool = true;
         });
