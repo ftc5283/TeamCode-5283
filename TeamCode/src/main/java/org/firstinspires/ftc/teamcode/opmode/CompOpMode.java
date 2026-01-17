@@ -59,7 +59,7 @@ public class CompOpMode extends OpMode{
 
         conveyor = hardwareMap.get(DcMotorEx.class, "conveyor");
         conveyorMove = new MotorActions(conveyor, telemetryPipeline).moveMotor(0);
-        conveyorMove.powerMultiplier = 0.1;
+        conveyorMove.powerMultiplier = 0.25;
 
         wall = hardwareMap.get(ServoImplEx.class, "wall");
         wall.setDirection(Servo.Direction.REVERSE);
@@ -121,6 +121,9 @@ public class CompOpMode extends OpMode{
     boolean isCocked = false;
     boolean justFired = false;
     long conveyorTimer = 0;
+    boolean startedLifting = true;
+    boolean justLifted = true;
+    long wallTimer = 0;
 
     @Override
     public void loop() {
@@ -152,15 +155,6 @@ public class CompOpMode extends OpMode{
             return;
         }
 
-        if (wallXPress.checkWithin(primaryCtrl, 1000)) {
-            wall.setPosition(HardwareConstants.WALL_POS);
-        } else {
-            wall.setPosition(0);
-        }
-
-        telemetryPipeline.addDataPoint("wall pos", wall.getPosition());
-        telemetryPipeline.addDataPoint("wall pos", wall.getDirection());
-
         final double turnSpeed = gamepad1.right_trigger - gamepad1.left_trigger;
         final double[] speeds = GampadUtils.speedInputs(primaryCtrl);
         final double forwardSpeed = speeds[0];
@@ -174,15 +168,6 @@ public class CompOpMode extends OpMode{
             squareInputs
         );
 
-        supervisor.run(telemetryPipeline);
-
-        telemetryPipeline.addDataPoint("forward Speed", forwardSpeed);
-        telemetryPipeline.addDataPoint("turn Speed", turnSpeed);
-        telemetryPipeline.addDataPoint("strafe Speed", strafeSpeed);
-
-        telemetryPipeline.addDataPoint("y held", primaryCtrl.getButton(Y));
-        telemetryPipeline.addDataPoint("b held", primaryCtrl.getButton(B));
-
         if (cockerAPress.check(primaryCtrl)) {
             if (isCocked) {
                 cockerMove.targetPos += 3*HardwareConstants.COCKER_360/4;
@@ -194,17 +179,47 @@ public class CompOpMode extends OpMode{
         }
         cockerMove.run();
 
-        if (conveyorYPress.check(primaryCtrl) ||  (justFired && conveyorMove.within())) {
+        if (conveyorYPress.check(primaryCtrl) ||  (justFired && cockerMove.within())) {
             conveyorTimer = System.currentTimeMillis();
+            justFired = false;
         }
-        if (conveyorYPress.checkWithin(primaryCtrl, 1000)) {
+
+        if (conveyorTimer + 1000 >= System.currentTimeMillis()) {
             conveyorMove.targetPos = HardwareConstants.CONVEYOR_TOP_POSITION;
             telemetryPipeline.addDataPoint("Conveyor goal", conveyorMove.targetPos);
+            startedLifting = true;
         } else {
+            if (startedLifting) {
+                justLifted = true;
+                startedLifting = false;
+            }
             conveyorMove.targetPos = 70*Misc.sgn(HardwareConstants.CONVEYOR_TOP_POSITION);
             telemetryPipeline.addDataPoint("Conveyor goal", conveyorMove.targetPos);
         }
         conveyorMove.run();
+
+        if (wallXPress.check(primaryCtrl) || justLifted) {
+            justLifted = false;
+            wallTimer = System.currentTimeMillis();
+        }
+
+        if (wallTimer + 1000 >= System.currentTimeMillis()) {
+            wall.setPosition(HardwareConstants.WALL_POS);
+        } else {
+            wall.setPosition(0);
+        }
+
+        supervisor.run(telemetryPipeline);
+
+        telemetryPipeline.addDataPoint("forward Speed", forwardSpeed);
+        telemetryPipeline.addDataPoint("turn Speed", turnSpeed);
+        telemetryPipeline.addDataPoint("strafe Speed", strafeSpeed);
+
+        telemetryPipeline.addDataPoint("y held", primaryCtrl.getButton(Y));
+        telemetryPipeline.addDataPoint("b held", primaryCtrl.getButton(B));
+
+        telemetryPipeline.addDataPoint("wall pos", wall.getPosition());
+        telemetryPipeline.addDataPoint("wall pos", wall.getDirection());
 
         telemetryPipeline.addDataPoint("conveyor pos", conveyor.getCurrentPosition());
         telemetryPipeline.addDataPoint("conveyor target", conveyorMove.getTarget());
