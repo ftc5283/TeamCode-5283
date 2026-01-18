@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -13,7 +14,7 @@ import org.firstinspires.ftc.teamcode.utility.HardwareConstants;
 import org.firstinspires.ftc.teamcode.utility.SimpleAtomicBool;
 import static org.firstinspires.ftc.teamcode.utility.Misc.withinTolerance;
 
-@TeleOp(name = "Reset Motors")
+@Autonomous(name = "Reset Motors", group = "Main")
 public class ResetMotorsPos extends LinearOpMode {
     protected TelemetryPipeline telemetryPipeline;
     protected HardwarePipeline drive;
@@ -26,14 +27,14 @@ public class ResetMotorsPos extends LinearOpMode {
     int cockerInitPos;
     int conveyorInitPos;
 
-    SimpleAtomicBool cockerComplete = new SimpleAtomicBool();
-    SimpleAtomicBool conveyorComplete = new SimpleAtomicBool();
+    final SimpleAtomicBool cockerComplete = new SimpleAtomicBool();
+    final SimpleAtomicBool conveyorComplete = new SimpleAtomicBool();
 
-    final int timeRes = 100;
-    final int measures = 5;
+    final static int timeRes = 100;
+    final static int measures = 5;
 
-    final double conveyorSpeedEncodePerMillis = 30.0/500;
-    final double cockerSpeedEncodePerMillis = 35.0/500;
+    final static double conveyorSpeedEncodePerMillis = 30.0/500;
+    final static double cockerSpeedEncodePerMillis = 35.0/500;
 
     public static void motorRunTillCollision(
         String name,
@@ -111,32 +112,6 @@ public class ResetMotorsPos extends LinearOpMode {
                 measures,
                 timeRes
             );
-
-//            if (withinTolerance(cockerInitPos,  cocker.getCurrentPosition(), 25)) {
-//                cocker.setTargetPosition(cocker.getCurrentPosition() + HardwareConstants.COCKER_TEETH_LENGTH);
-//                cocker.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//
-//                String busyHeader = "Cocker appears to have started meshed. Moving out of meshed position";
-//                while (cocker.isBusy()) {
-//                    telemetryPipeline.addHeaderPerpetual(busyHeader);
-//                }
-//                telemetryPipeline.removeHeader(busyHeader);
-//
-//                String lowPower = "Cocker moving into position";
-//                telemetryPipeline.addHeaderPerpetual(lowPower);
-//                motorRunTillCollision(
-//                        "Cocker",
-//                        cocker,
-//                        HardwareConstants.COCKER_WEAK_POWER,
-//                        telemetryPipeline,
-//                        tolerance,
-//                        measures,
-//                        timeRes
-//                );
-//
-//            }
-//            cocker.setPower(0);
-
             cockerComplete.bool = true;
         });
 

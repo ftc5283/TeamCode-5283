@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.opmode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name = "Auto Move Forward")
+@Autonomous(name = "Auto Move Forward", group = "Main")
 public class AutoMoveForward extends AutoSuperClass {
     @Override
     public void runOpMode() {

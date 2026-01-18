@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.utility.Misc;
 import org.firstinspires.ftc.teamcode.utility.Supervisor;
 import org.firstinspires.ftc.teamcode.actions.MotorActions.MoveMotor;
 
-@TeleOp(name = "Competition TeleOp")
+@TeleOp(name = "Competition TeleOp", group = "Main")
 public class CompOpMode extends OpMode{
     protected TelemetryPipeline telemetryPipeline;
     protected HardwarePipeline drive;
