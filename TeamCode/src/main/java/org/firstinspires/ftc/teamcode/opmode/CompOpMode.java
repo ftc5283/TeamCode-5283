@@ -58,7 +58,7 @@ public class CompOpMode extends OpMode{
         cocker.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         conveyor = hardwareMap.get(DcMotorEx.class, "conveyor");
-        conveyorMove = new MotorActions(conveyor, telemetryPipeline).moveMotor(0);
+        conveyorMove = new MotorActions(conveyor, telemetryPipeline).moveMotor(-30);
         conveyorMove.powerMultiplier = 0.25;
         conveyor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -189,7 +189,7 @@ public class CompOpMode extends OpMode{
                 justLifted = true;
                 startedLifting = false;
             }
-            conveyorMove.targetPos = 70*Misc.sgn(HardwareConstants.CONVEYOR_TOP_POSITION);
+            conveyorMove.targetPos = 30*Misc.sgn(HardwareConstants.CONVEYOR_TOP_POSITION);
             telemetryPipeline.addDataPoint("Conveyor goal", conveyorMove.targetPos);
         }
 
