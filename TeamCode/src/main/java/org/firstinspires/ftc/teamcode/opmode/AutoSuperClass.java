@@ -1,21 +1,14 @@
 package org.firstinspires.ftc.teamcode.opmode;
 
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.actions.MotorActions;
 import org.firstinspires.ftc.teamcode.pipeline.HardwarePipeline;
 import org.firstinspires.ftc.teamcode.pipeline.TelemetryPipeline;
 import org.firstinspires.ftc.teamcode.utility.HardwareConstants;
 import org.firstinspires.ftc.teamcode.utility.Misc;
-import org.firstinspires.ftc.teamcode.utility.Supervisor;
 import org.firstinspires.ftc.teamcode.actions.MotorActions.MoveMotor;
 
 public abstract class AutoSuperClass extends LinearOpMode {
@@ -43,22 +36,25 @@ public abstract class AutoSuperClass extends LinearOpMode {
         telemetryPipeline = new TelemetryPipeline(telemetry);
         drive = new HardwarePipeline(hardwareMap);
 
-        cocker = hardwareMap.get(DcMotorEx.class, "cocker");
-        cockerMove = new MotorActions(cocker, telemetryPipeline).moveMotor(
-            (cocker.getCurrentPosition()/HardwareConstants.COCKER_360)*HardwareConstants.COCKER_360 +
-            HardwareConstants.COCKER_360/6
-        );
-
-        conveyor = hardwareMap.get(DcMotorEx.class, "conveyor");
-        conveyorMove = new MotorActions(conveyor, telemetryPipeline).moveMotor(0);
-        conveyorMove.powerMultiplier = 0.25;
-
-        if (startParallelTelemetry) {
-            this.startParallelTelemetry();
-        }
+//        conveyor = hardwareMap.get(DcMotorEx.class, "conveyor");
+//        conveyorMove = new MotorActions(conveyor, telemetryPipeline).moveMotor(0);
+//        conveyorMove.powerMultiplier = 0.25;
+//
+//        if (startParallelTelemetry) {
+//            this.startParallelTelemetry();
+//        }
     }
 
-    public void startThreads() {
+    public void initializeCocker() {
+        cocker = hardwareMap.get(DcMotorEx.class, "cocker");
+        cockerMove = new MotorActions(cocker, telemetryPipeline).moveMotor(
+                (cocker.getCurrentPosition()/HardwareConstants.COCKER_360)*HardwareConstants.COCKER_360 +
+                        HardwareConstants.COCKER_COCKED
+        );
+    }
+
+
+    public void startShootingThread() {
         final AutoSuperClass op = this;
         final Thread loadAndLaunch = new Thread(() -> {
             if (op.shoot) {

@@ -11,7 +11,13 @@ public class AutoMoveForward extends AutoSuperClass {
 //==========================//
         waitForStart();
 //==========================//
-
+//        initializeCocker();
+//        Thread cockerThread = new Thread(() -> {
+//            cockerMove.run();
+//        });
+////        cockerMove.targetPos
+//        cockerThread.start();
         move(0.7,0, 600);
+
     }
 }

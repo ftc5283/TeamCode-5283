@@ -178,8 +178,6 @@ public class CompOpMode extends OpMode{
             this.justFired = false;
             conveyorTimer = System.currentTimeMillis();
         }
-        conveyorMove.run();
-
         if (conveyorTimer + 1000 >= System.currentTimeMillis()) {
             conveyorMove.targetPos = HardwareConstants.CONVEYOR_TOP_POSITION;
             telemetryPipeline.addDataPoint("Conveyor goal", conveyorMove.targetPos);
@@ -192,12 +190,12 @@ public class CompOpMode extends OpMode{
             conveyorMove.targetPos = 30*Misc.sgn(HardwareConstants.CONVEYOR_TOP_POSITION);
             telemetryPipeline.addDataPoint("Conveyor goal", conveyorMove.targetPos);
         }
+        conveyorMove.run();
 
         if (wallXPress.check(primaryCtrl) || (justLifted && conveyorMove.within())) {
             justLifted = false;
             wallTimer = System.currentTimeMillis();
         }
-
         if (wallTimer + 1000 >= System.currentTimeMillis()) {
             wall.setPosition(HardwareConstants.WALL_POS);
         } else {

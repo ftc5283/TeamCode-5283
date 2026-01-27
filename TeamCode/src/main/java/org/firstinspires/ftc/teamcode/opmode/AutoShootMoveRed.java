@@ -8,6 +8,6 @@ public class AutoShootMoveRed extends AutoShoot {
     @Override
     public void runOpMode() {
         super.runOpMode();
-        move(0.7,-(2*Math.PI)/3, 1400, -0.05);
+        move(0.85,-(2*Math.PI)/3, 1400, -0.05);
     }
 }
